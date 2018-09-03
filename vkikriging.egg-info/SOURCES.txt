@@ -1,0 +1,15 @@
+README.md
+setup.py
+vkikriging/__init__.py
+vkikriging/covariance.py
+vkikriging/kriging_v1.py
+vkikriging/kriging_v2.py
+vkikriging/kriging_v3.py
+vkikriging/mylib.py
+vkikriging/sampling.py
+vkikriging/sampling_sobol.py
+vkikriging/test_functions.py
+vkikriging.egg-info/PKG-INFO
+vkikriging.egg-info/SOURCES.txt
+vkikriging.egg-info/dependency_links.txt
+vkikriging.egg-info/top_level.txt
