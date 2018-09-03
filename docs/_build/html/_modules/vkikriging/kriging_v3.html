@@ -1,0 +1,216 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vkikriging.kriging_v3 &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vkikriging.kriging_v3</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Kriging and Gradient-Enhanced Kriging - version 3 (`kriging_v3`)</span>
+<span class="sd">================================================================</span>
+
+<span class="sd">Universal Kriging in d-dimensions.  This differs from `kriging_v1` and `kriging_v2`</span>
+<span class="sd">which implement only simple Kriging.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">.mylib</span> <span class="k">import</span> <span class="n">Timing</span>
+<span class="kn">from</span> <span class="nn">.covariance</span> <span class="k">import</span> <span class="n">covariance_squaredexponential</span><span class="p">,</span> <span class="n">covariance_squaredexponential_dxi</span><span class="p">,</span> <span class="n">covariance_squaredexponential_dxidxi</span>
+
+
+<div class="viewcode-block" id="F_linear"><a class="viewcode-back" href="../../vkikriging.kriging_v3.html#vkikriging.kriging_v3.F_linear">[docs]</a><span class="k">def</span> <span class="nf">F_linear</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Basis functions for parameterization of non-stationary mean.  This version of the</span>
+<span class="sd">    function implements a linear basis.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      xi (ndarray): Coordinates of points in parameter space, shape `(n, d)`</span>
+<span class="sd">    Return:</span>
+<span class="sd">      out (ndarray): Matrix F shape `(n, M)`, where `M` is the number of basis functions.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="mi">1</span><span class="p">)),</span> <span class="n">xi</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="dF_linear"><a class="viewcode-back" href="../../vkikriging.kriging_v3.html#vkikriging.kriging_v3.dF_linear">[docs]</a><span class="k">def</span> <span class="nf">dF_linear</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Derivatives of basis functions defined in F_linear().  (Would be) needed for</span>
+<span class="sd">    non-stationary mean with GEK.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">      xi (ndarray): Coordinates of points in parameter space, shape `(n, d)`</span>
+<span class="sd">    Return:</span>
+<span class="sd">      out (ndarray): Tensor of derivatives, shape `(n, M, d)`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">d</span> <span class="o">+</span> <span class="mi">1</span>  <span class="c1"># Must be equal to M = F_linear(xi).shape[1]</span>
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">M</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">out</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">:,</span> <span class="p">:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<div class="viewcode-block" id="kriging"><a class="viewcode-back" href="../../vkikriging.kriging_v3.html#vkikriging.kriging_v3.kriging">[docs]</a><span class="k">def</span> <span class="nf">kriging</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">observed</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">F_mean</span><span class="p">,</span> <span class="n">sd_x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Function kriging_v1.kriging() modified for universal Kriging (spatially variable</span>
+<span class="sd">	mean based on general regression).  This is achived by introducing a function-basis</span>
+<span class="sd">	F (e.g. `F_linear()`) for representing the *variable* mean, and new unknown vector</span>
+<span class="sd">	\lambda.  The mean is then \lambda . F, and the unknown vector x is augmented:</span>
+
+<span class="sd">      x_a = [x, \lambda],</span>
+
+<span class="sd">    given which the new observation operator is:</span>
+
+<span class="sd">      H_a = [H, F].</span>
+<span class="sd"> </span>
+<span class="sd">    The prior mean (of the Gaussian process) is now always zero, instead of specifying</span>
+<span class="sd">	the mean `mu_x`, the function-basis must be specified in the argument `F_mean`.</span>
+
+<span class="sd">    Args:  </span>
+<span class="sd">      xi (ndarray): Sample locations (both observations and predictions), shape `(n,d)`</span>
+<span class="sd">      x (ndarray): Sample values (values not at observation locations are not used).  </span>
+<span class="sd">                   Shape `n`.</span>
+<span class="sd">      observed (ndarray): Bool array specifying which values are observed.  Shape `n`,</span>
+<span class="sd">                          `True` - observed, `False` - not observed.</span>
+<span class="sd">      sigma_y (float): Standard-deviation of observation error.  Scalar.</span>
+<span class="sd">      F_mean (function): A function in the template of F_linear(), providing a basis for </span>
+<span class="sd">	                     the description of the non-stationary mean (in d-dimensions).</span>
+<span class="sd">      sd_x (float): (Sample) standard-deviation of the approximated function,</span>
+<span class="sd">                    used in the prior.  Scalars.</span>
+<span class="sd">      gamma (float): Correlation coefficient in all directions.  Scalar.</span>
+
+<span class="sd">    Return:</span>
+<span class="sd">      out (dict): Dictionary of prior and posterior statistics.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+    <span class="c1">### Determine problem dimensions from input.</span>
+    <span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span>  <span class="c1">#</span>
+    <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">n</span><span class="p">)[</span><span class="n">observed</span><span class="p">]</span>  <span class="c1"># Observation operator</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">H</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>  <span class="c1"># Observations</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">size</span>  <span class="c1"># Number of observations</span>
+    <span class="n">F</span> <span class="o">=</span> <span class="n">F_mean</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span>  <span class="c1"># Basis for non-stationary mean</span>
+    <span class="n">Fy</span> <span class="o">=</span> <span class="n">F</span><span class="p">[</span><span class="n">observed</span><span class="p">]</span>  <span class="c1"># Restricted to observation locations</span>
+    <span class="n">M</span> <span class="o">=</span> <span class="n">F</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Size of basis</span>
+    <span class="n">Ha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">H</span><span class="p">,</span> <span class="n">Fy</span><span class="p">))</span>  <span class="c1"># Augmented observation operator</span>
+
+    <span class="c1">### Observation error covar matrix</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">sigma_y</span><span class="p">,</span> <span class="mf">1.e-4</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+
+    <span class="c1">### Prior mean and covariance at the sample locations.  Augmented</span>
+    <span class="c1">### with priors of coefficients (TODO: atm normal dist with large</span>
+    <span class="c1">### std, should be non-informative).</span>
+    <span class="n">t</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">()</span>
+    <span class="n">mua_prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">M</span><span class="p">)</span>
+    <span class="n">Pa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span> <span class="o">+</span> <span class="n">M</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="n">M</span><span class="p">))</span>
+    <span class="n">Pa</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span> <span class="p">:</span><span class="n">n</span><span class="p">]</span> <span class="o">=</span> <span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">covariance_squaredexponential</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">gamma</span><span class="p">)</span>
+    <span class="n">Pa</span><span class="p">[</span><span class="n">n</span><span class="p">:,</span> <span class="n">n</span><span class="p">:]</span> <span class="o">=</span> <span class="mf">1.e6</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>  <span class="c1"># Prior on mean coefficients</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Build prior covariance&#39;</span><span class="p">)</span>
+
+    <span class="c1">### The gain matrix.</span>
+    <span class="n">Aa</span> <span class="o">=</span> <span class="n">R</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ha</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Pa</span><span class="p">,</span> <span class="n">Ha</span><span class="o">.</span><span class="n">T</span><span class="p">))</span>
+    <span class="n">Ka</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Pa</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ha</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">Aa</span><span class="p">)))</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Invert K&#39;</span><span class="p">)</span>
+
+    <span class="c1">### Posterior mean and covariance (prediction):</span>
+    <span class="c1">#   E(x|y) (&quot;predictor&quot;)</span>
+    <span class="n">muahat</span> <span class="o">=</span> <span class="n">mua_prior</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ka</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ha</span><span class="p">,</span> <span class="n">mua_prior</span><span class="p">))</span>
+    <span class="n">muhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">F</span><span class="p">,</span> <span class="n">muahat</span><span class="p">[</span><span class="n">n</span><span class="p">:])</span> <span class="o">+</span> <span class="n">muahat</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior mean&#39;</span><span class="p">)</span>
+    <span class="c1">#   Cov(x|y) (&quot;mean-squared error estimator&quot;)</span>
+    <span class="n">covahat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">M</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Ka</span><span class="p">,</span> <span class="n">Ha</span><span class="p">),</span> <span class="n">Pa</span><span class="p">)</span>
+    <span class="n">covPhat</span><span class="p">,</span> <span class="n">covFhat</span> <span class="o">=</span> <span class="n">covahat</span><span class="p">[:</span><span class="n">n</span><span class="p">,</span> <span class="p">:</span><span class="n">n</span><span class="p">],</span> <span class="n">covahat</span><span class="p">[</span><span class="n">n</span><span class="p">:,</span> <span class="n">n</span><span class="p">:]</span>
+    <span class="c1"># covhat  = np.dot(F, np.dot(covFhat, F.T)) + covPhat</span>
+    <span class="n">covhat</span> <span class="o">=</span> <span class="n">covPhat</span>
+    <span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior covariance&#39;</span><span class="p">)</span>
+
+    <span class="c1">### Return all this statistical information.</span>
+    <span class="k">return</span> <span class="p">{</span>
+        <span class="s1">&#39;mua_prior&#39;</span><span class="p">:</span> <span class="n">mua_prior</span><span class="p">,</span>
+        <span class="s1">&#39;cov_prior&#39;</span><span class="p">:</span> <span class="n">Pa</span><span class="p">,</span>  <span class="c1"># Prior (augmented)</span>
+        <span class="s1">&#39;muahat&#39;</span><span class="p">:</span> <span class="n">muahat</span><span class="p">,</span>
+        <span class="s1">&#39;covahat&#39;</span><span class="p">:</span> <span class="n">covahat</span><span class="p">,</span>  <span class="c1"># Posterior (augmented)</span>
+        <span class="s1">&#39;muhat&#39;</span><span class="p">:</span> <span class="n">muhat</span><span class="p">,</span>
+        <span class="s1">&#39;Sigmahat&#39;</span><span class="p">:</span> <span class="n">covhat</span><span class="p">,</span>  <span class="c1"># Posterior</span>
+    <span class="p">}</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

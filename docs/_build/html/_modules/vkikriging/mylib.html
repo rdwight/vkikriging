@@ -1,0 +1,191 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vkikriging.mylib &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vkikriging.mylib</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module of basic, generic functions (`mylib`)</span>
+<span class="sd">============================================</span>
+
+<span class="sd">Specifically for Kriging/GEK.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">copy</span><span class="o">,</span> <span class="nn">sys</span><span class="o">,</span> <span class="nn">time</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="k">import</span> <span class="n">sub</span>
+
+
+<div class="viewcode-block" id="gek_composite"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.gek_composite">[docs]</a><span class="k">def</span> <span class="nf">gek_composite</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	For GEK create composite vector of values and gradients - return</span>
+<span class="sd">	1d vector xc.  This function defines the order of entries in composite</span>
+<span class="sd">	vectors, and we must be consistent.	 The reverse of this is gek_separate().</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;Dimension of derivative info wrong.&#39;</span>
+	<span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">shape</span>
+	<span class="n">xc</span> <span class="o">=</span> <span class="n">copy</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># Extended sample values</span>
+	<span class="n">xc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">xc</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="n">d</span><span class="p">)))</span>
+	<span class="k">return</span> <span class="n">xc</span></div>
+
+
+<div class="viewcode-block" id="gek_separate"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.gek_separate">[docs]</a><span class="k">def</span> <span class="nf">gek_separate</span><span class="p">(</span><span class="n">xc</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Map composite vector returned by GEK into individual value and</span>
+<span class="sd">	derivate vectors.  This is useful for postprocessing output of</span>
+<span class="sd">	gek() for plotting etc.	 Return x (n), dx (n x d).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">xc</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">xc</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Dimension of input wrong.&#39;</span>
+	<span class="n">n</span> <span class="o">=</span> <span class="n">xc</span><span class="o">.</span><span class="n">size</span> <span class="o">//</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="n">x</span> <span class="o">=</span> <span class="n">xc</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>	<span class="c1"># Values</span>
+	<span class="n">dx</span> <span class="o">=</span> <span class="n">xc</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>	 <span class="c1"># Gradients</span>
+	<span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx</span></div>
+
+
+<div class="viewcode-block" id="covariance_to_stddev"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.covariance_to_stddev">[docs]</a><span class="k">def</span> <span class="nf">covariance_to_stddev</span><span class="p">(</span><span class="n">Sigma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Obtain sample-wise standard deviation for given covariance matrix</span>
+<span class="sd">	(extract the diagonal and take sqrt).  Useful when plotting error bars.</span>
+<span class="sd">	  Sigma - Square, +ve-def, covariance matrix, e.g. P or Sigmahat.</span>
+<span class="sd">	Return array (n).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="c1">### np.abs() is there just for robustness - rounding error can result in</span>
+	<span class="c1">### diagonal values in Sigma of e.g -1e-14.</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">Sigma</span><span class="p">)))</span></div>
+
+
+<div class="viewcode-block" id="Timing"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.Timing">[docs]</a><span class="k">class</span> <span class="nc">Timing</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Very rough timing reporting with minimal code intrusiuon - call</span>
+<span class="sd">	__init__() once at start, and monitor() to report each time</span>
+<span class="sd">	increment.	Turn stdout reporting off with verbose=False, times</span>
+<span class="sd">	are still measured and stored in self.t1 (list).</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t1</span> <span class="o">=</span> <span class="p">[</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">verbose</span> <span class="o">=</span> <span class="n">verbose</span>
+
+<div class="viewcode-block" id="Timing.reinit"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.Timing.reinit">[docs]</a>	<span class="k">def</span> <span class="nf">reinit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span></div>
+
+<div class="viewcode-block" id="Timing.monitor"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.Timing.monitor">[docs]</a>	<span class="k">def</span> <span class="nf">monitor</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">message</span><span class="p">):</span>
+		<span class="n">t2</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">verbose</span><span class="p">:</span>
+			<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%40s</span><span class="s1">: </span><span class="si">%10.2f</span><span class="s1"> s&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">message</span><span class="p">,</span> <span class="n">t2</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">t1</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t1</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+		<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div></div>
+
+		
+<div class="viewcode-block" id="enter_debugger_on_uncaught_exception"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.enter_debugger_on_uncaught_exception">[docs]</a><span class="k">def</span> <span class="nf">enter_debugger_on_uncaught_exception</span><span class="p">():</span>
+	<span class="sd">&quot;&quot;&quot;Automatically entering the debugger on any uncaught exception.&quot;&quot;&quot;</span>
+	<span class="k">def</span> <span class="nf">info</span><span class="p">(</span><span class="n">type1</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">):</span>
+		<span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">sys</span><span class="p">,</span> <span class="s1">&#39;ps1&#39;</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">sys</span><span class="o">.</span><span class="n">stderr</span><span class="o">.</span><span class="n">isatty</span><span class="p">()</span> <span class="ow">or</span> <span class="n">type1</span> <span class="o">==</span> <span class="ne">SyntaxError</span><span class="p">:</span>
+			<span class="c1"># we are in interactive mode or we don&#39;t have a tty-like device, or error is</span>
+			<span class="c1"># a SyntaxError (can not be debugged), so we call the default hook</span>
+			<span class="n">sys</span><span class="o">.</span><span class="n">__excepthook__</span><span class="p">(</span><span class="n">type1</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="kn">import</span> <span class="nn">traceback</span><span class="o">,</span> <span class="nn">ipdb</span>
+			<span class="c1"># we are NOT in interactive mode, print the exception...</span>
+			<span class="n">traceback</span><span class="o">.</span><span class="n">print_exception</span><span class="p">(</span><span class="n">type1</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">tb</span><span class="p">)</span>
+			<span class="nb">print</span><span class="p">()</span>
+			<span class="c1"># ...then start the debugger in post-mortem mode.</span>
+			<span class="n">ipdb</span><span class="o">.</span><span class="n">pm</span><span class="p">()</span>
+	<span class="n">sys</span><span class="o">.</span><span class="n">excepthook</span> <span class="o">=</span> <span class="n">info</span></div>
+
+	
+<div class="viewcode-block" id="iowrite"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.iowrite">[docs]</a><span class="k">def</span> <span class="nf">iowrite</span><span class="p">(</span><span class="n">filename</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Print file-writing information to stdout (in blue!).&quot;&quot;&quot;</span>
+	<span class="n">FILEIO</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[94m&#39;</span>
+	<span class="n">ENDC</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="se">\033</span><span class="s1">[0m&#39;</span>
+	<span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;</span><span class="si">{FILEIO}</span><span class="s1">Writing &lt;</span><span class="si">{filename}</span><span class="s1">&gt;</span><span class="si">{ENDC}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="get_aspect"><a class="viewcode-back" href="../../vkikriging.mylib.html#vkikriging.mylib.get_aspect">[docs]</a><span class="k">def</span> <span class="nf">get_aspect</span><span class="p">(</span><span class="n">ax</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Compute the aspect-ratio of matplotlib Axis `ax`.&quot;&quot;&quot;</span>
+	<span class="n">figW</span><span class="p">,</span> <span class="n">figH</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_figure</span><span class="p">()</span><span class="o">.</span><span class="n">get_size_inches</span><span class="p">()</span>	<span class="c1"># Total figure size</span>
+	<span class="n">_</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span> <span class="n">w</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">get_position</span><span class="p">()</span><span class="o">.</span><span class="n">bounds</span>  <span class="c1"># Axis size on figure </span>
+	<span class="n">disp_ratio</span> <span class="o">=</span> <span class="p">(</span><span class="n">figH</span> <span class="o">*</span> <span class="n">h</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">figW</span> <span class="o">*</span> <span class="n">w</span><span class="p">)</span>  <span class="c1"># Ratio of display units</span>
+	<span class="n">data_ratio</span> <span class="o">=</span> <span class="n">sub</span><span class="p">(</span><span class="o">*</span><span class="n">ax</span><span class="o">.</span><span class="n">get_ylim</span><span class="p">())</span> <span class="o">/</span> <span class="n">sub</span><span class="p">(</span><span class="o">*</span><span class="n">ax</span><span class="o">.</span><span class="n">get_xlim</span><span class="p">())</span>	<span class="c1"># Ratio of data units</span>
+	<span class="k">return</span> <span class="n">disp_ratio</span> <span class="o">/</span> <span class="n">data_ratio</span></div>
+
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

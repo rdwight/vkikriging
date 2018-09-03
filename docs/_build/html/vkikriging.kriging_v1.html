@@ -1,0 +1,215 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)" href="vkikriging.kriging_v2.html" />
+    <link rel="prev" title="Prior covariance operators (covariance)" href="vkikriging.covariance.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v2.html" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.covariance.html" title="Prior covariance operators (covariance)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.covariance.html"
+                        title="previous chapter">Prior covariance operators (<cite>covariance</cite>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v2.html"
+                        title="next chapter">Kriging and Gradient-Enhanced Kriging - version 2 (<cite>kriging_v2</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.kriging_v1.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.kriging_v1"></span><div class="section" id="kriging-and-gradient-enhanced-kriging-version-1-kriging-v1">
+<h1>Kriging and Gradient-Enhanced Kriging - version 1 (<cite>kriging_v1</cite>)<a class="headerlink" href="#kriging-and-gradient-enhanced-kriging-version-1-kriging-v1" title="Permalink to this headline">¶</a></h1>
+<p>Simple Kriging and GEK in d-dimensions.</p>
+<p>Implementation follows the Bayesian derivation of Kriging exactly, with the same symbols
+as in the supplied tutorial.  No efforts are made for efficiency.  For a (slightly more)
+efficient implementation of simple Kriging see <cite>kriging_v2.py</cite>.  For an implementation
+of universal Kriging (i.e. with regression) see <cite>kriging_v3.py</cite>.</p>
+<dl class="function">
+<dt id="vkikriging.kriging_v1.gek">
+<code class="descclassname">vkikriging.kriging_v1.</code><code class="descname">gek</code><span class="sig-paren">(</span><em>xi</em>, <em>x</em>, <em>dx</em>, <em>observed</em>, <em>sigma_y</em>, <em>sigma_dy</em>, <em>mu_x</em>, <em>sd_x</em>, <em>gamma</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v1.html#gek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v1.gek" title="Permalink to this definition">¶</a></dt>
+<dd><p>Simple Gradient-Enhanced Kriging (GEK) in d-dimensions for a single
+variable - following the Bayesian derivation and notation.  Constant regression at</p>
+<blockquote>
+<div>given mean mu, mean gradient assumed zero.</div></blockquote>
+<dl class="docutils">
+<dt>Assumptions (as for kriging() and…):</dt>
+<dd><ul class="first last simple">
+<li>Gradients observations colocated with value observations.</li>
+<li>Gradients in all d directions observed at all observation locations.</li>
+<li>Constant gradient error for all locations and directions.</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi</strong> (<em>ndarray</em>) – Sample locations (both observations and predictions), shape <cite>(n,d)</cite></li>
+<li><strong>x</strong> (<em>ndarray</em>) – Sample values (values not at observation locations are not used).
+Shape <cite>n</cite>.</li>
+<li><strong>dx</strong> (<em>ndarray</em>) – Sample gradients, shape <cite>(n, d)</cite>.</li>
+<li><strong>observed</strong> (<em>ndarray</em>) – Bool array specifying which values are observed.  Shape <cite>n</cite>,
+<cite>True</cite> - observed, <cite>False</cite> - not observed.</li>
+<li><strong>sigma_y</strong> (<em>float</em>) – Standard-deviation of observation error.  Scalar.</li>
+<li><strong>sigma_dy</strong> (<em>float</em>) – Standard-deviations of observed gradient error.  Scalar.</li>
+<li><strong>sd_x</strong> (<em>mu_x</em><em>,</em>) – (Sample) mean and standard-deviation of the approximated
+function, used in the prior.  Scalars.</li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation coefficient in all directions.  Scalar.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary of prior and posterior statistics.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (dict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.kriging_v1.kriging">
+<code class="descclassname">vkikriging.kriging_v1.</code><code class="descname">kriging</code><span class="sig-paren">(</span><em>xi</em>, <em>x</em>, <em>observed</em>, <em>sigma_y</em>, <em>mu_x</em>, <em>sd_x</em>, <em>gamma</em>, <em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v1.html#kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v1.kriging" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div>Kriging in d-dimensions for a single variable - following the Bayesian derivation and</div></blockquote>
+<p>notation.  The following assumptions are limitations of the current implementation
+which may be lifted without substancially modifying the derivation (just coding).</p>
+<dl class="docutils">
+<dt>Assumptions:</dt>
+<dd><ul class="first last simple">
+<li>Constant regression at specified mean mu.</li>
+<li>Same constant error for all observations (sigma_y)</li>
+<li>Stationarity of the Gaussian process (constant standard
+deviation of the prior).</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi</strong> (<em>ndarray</em>) – Sample locations (both observations and predictions), shape <cite>(n,d)</cite></li>
+<li><strong>x</strong> (<em>ndarray</em>) – Sample values (values not at observation locations are not used).
+Shape <cite>n</cite>.</li>
+<li><strong>observed</strong> (<em>ndarray</em>) – Bool array specifying which values are observed.  Shape <cite>n</cite>,
+<cite>True</cite> - observed, <cite>False</cite> - not observed.</li>
+<li><strong>sigma_y</strong> (<em>float</em>) – Standard-deviation of observation error.  Scalar.</li>
+<li><strong>sd_x</strong> (<em>mu_x</em><em>,</em>) – (Sample) mean and standard-deviation of the approximated
+function, used in the prior.  Scalars.</li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation coefficient in all directions.  Scalar.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary of prior and posterior statistics.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (dict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>NOTE: This intended to be a simple teaching implementation, it is not efficient.  In
+particular is is not necessary to construct the prior covariance for unobserved
+locations with respect to each other as we do here.  A better implementation can be
+obtained with a little linear algebra.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v2.html" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.covariance.html" title="Prior covariance operators (covariance)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

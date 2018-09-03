@@ -1,0 +1,270 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)" href="vkikriging.kriging_v3.html" />
+    <link rel="prev" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)" href="vkikriging.kriging_v1.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v3.html" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v1.html" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v1.html"
+                        title="previous chapter">Kriging and Gradient-Enhanced Kriging - version 1 (<cite>kriging_v1</cite>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v3.html"
+                        title="next chapter">Kriging and Gradient-Enhanced Kriging - version 3 (<cite>kriging_v3</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.kriging_v2.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.kriging_v2"></span><div class="section" id="kriging-and-gradient-enhanced-kriging-version-2-kriging-v2">
+<h1>Kriging and Gradient-Enhanced Kriging - version 2 (<cite>kriging_v2</cite>)<a class="headerlink" href="#kriging-and-gradient-enhanced-kriging-version-2-kriging-v2" title="Permalink to this headline">¶</a></h1>
+<p>Simple Kriging and GEK in d-dimensions.</p>
+<p>This differs from <cite>kriging_v1</cite> mainly in that sample locations are calculated
+separately from prediction locations - the implementation does not follow the Bayesian
+derivation as closely, but this saves a lot of time and memory.</p>
+<dl class="class">
+<dt id="vkikriging.kriging_v2.GEK">
+<em class="property">class </em><code class="descclassname">vkikriging.kriging_v2.</code><code class="descname">GEK</code><span class="sig-paren">(</span><em>xi</em>, <em>y</em>, <em>dy</em>, <em>sigma_y</em>, <em>sigma_dy</em>, <em>mu_x</em>, <em>sd_x</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Gradient-Enhanced Kriging (GEK) in d-dimensions for a single
+variable.  This differs from kriging_v1.gek() mainly in that
+sample locations are calculated separately from prediction
+locations - the implementation does not follow the Bayesian
+derivation as closely, but this saves a lot of time and memory.
+Construction of the surrogate happens in the __init__() call,
+after which predictions can be made with one or more predict()
+calls.</p>
+<dl class="docutils">
+<dt>Assumptions (as for Kriging class and…):</dt>
+<dd><ul class="first last simple">
+<li>Gradients observations colocated with value observations.</li>
+<li>Gradients in all d direcitons observed at all locations.</li>
+<li>Constant gradient error for all locations and directions.</li>
+</ul>
+</dd>
+</dl>
+<p>Constant regression at given mean mu, mean gradient assumed zero.</p>
+<dl class="method">
+<dt id="vkikriging.kriging_v2.GEK.composite">
+<code class="descname">composite</code><span class="sig-paren">(</span><em>x</em>, <em>dx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK.composite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK.composite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create composite vector of values and gradients - return 1d
+vector xc.      This function defines the order of entries in
+composite vectors, and we must be consistent with prior_cov().
+The reverse of this is separate().</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.kriging_v2.GEK.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>xip</em>, <em>posterior_cov=None</em>, <em>partial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK.predict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Predict response at locations xip in d-dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xip</strong> (<em>ndarray</em>) – Prediction locations, shape <cite>(m, d)</cite></li>
+<li><strong>posterior_cov</strong> (<em>str</em>) – None, return posterior mean only,
+‘diag’, diagonal part only, array (m),
+‘full’, full cov matrix, array (m x m).</li>
+<li><strong>partial</strong> (<em>bool</em>) – Construct only part of the covariance matrix,
+reduces cost, but allows output of values only,
+not gradients, and not CoV.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">muhat, [Sigmahat] - Posterior mean, covariance</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.kriging_v2.GEK.predict_split">
+<code class="descname">predict_split</code><span class="sig-paren">(</span><em>xip</em>, <em>max_array=10000000.0</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK.predict_split"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK.predict_split" title="Permalink to this definition">¶</a></dt>
+<dd><p>Same as predict(), but splits a very large job into multiple smaller jobs to
+save memory.  Arg. max_array specifies the maximum size of the array that should
+be created in the process.      Handy when doing Monte-Carlo on the GEK surface.  Only
+values, not gradients predicted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.kriging_v2.GEK.prior_cov">
+<code class="descname">prior_cov</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>partial=False</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK.prior_cov"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK.prior_cov" title="Permalink to this definition">¶</a></dt>
+<dd><p>Construct the prior covariance matrix for GEK - from 4 parts.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>partial</strong> (<em>bool</em>) – If True construct only the upper two blocks, sufficient
+for prediction of values only (not gradients).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Prior covariance.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">P (ndarray)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.kriging_v2.GEK.separate">
+<code class="descname">separate</code><span class="sig-paren">(</span><em>xc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#GEK.separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.GEK.separate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map composite vector returned by GEK into individual value and
+derivate vectors.  This is useful for postprocessing output of
+GEK.predict() for plotting etc.  Return x (n), dx (n x d).</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.kriging_v2.Kriging">
+<em class="property">class </em><code class="descclassname">vkikriging.kriging_v2.</code><code class="descname">Kriging</code><span class="sig-paren">(</span><em>xi</em>, <em>y</em>, <em>sigma_y</em>, <em>mu_x</em>, <em>sd_x</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#Kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.Kriging" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Simple Kriging in d-dimensions for a single variable.  Construction of the
+surrogate happens in the __init__() call, after which predictions
+can be made with multiple predict() calls.</p>
+<dl class="docutils">
+<dt>Assumptions:</dt>
+<dd><ul class="first last simple">
+<li>Constant regression at specified mean mu.</li>
+<li>Same constant error for all observations (sigma_y)</li>
+<li><dl class="first docutils">
+<dt>Stationarity of the Gaussian process (constant standard</dt>
+<dd>deviation of the prior).</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>xi</strong> (<em>ndarray</em>) – Sample locations (observations only), shape <cite>(n,d)</cite></li>
+<li><strong>x</strong> (<em>ndarray</em>) – Sample values. Shape <cite>n</cite>.</li>
+<li><strong>sigma_y</strong> (<em>float</em>) – Standard-deviation of observation error.      Scalar.</li>
+<li><strong>sd_x</strong> (<em>mu_x</em><em>,</em>) – (Sample) mean and standard-deviation of the approximated function,
+used in the prior.  Scalars.</li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation coefficient in all directions.      Scalar.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="vkikriging.kriging_v2.Kriging.predict">
+<code class="descname">predict</code><span class="sig-paren">(</span><em>xip</em>, <em>posterior_cov=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v2.html#Kriging.predict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v2.Kriging.predict" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="docutils">
+<dt>Predict response at locations xip in d-dimensions.</dt>
+<dd><p class="first">xip                   - Prediction locations, array (m x d)
+posterior_cov - None, return posterior mean only,</p>
+<blockquote class="last">
+<div>‘diag’, diagonal part only, array (m),
+‘full’, full cov matrix, array (m x m).</div></blockquote>
+</dd>
+<dt>Return</dt>
+<dd>muhat, [Sigmahat] - Posterior mean, covariance</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v3.html" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v1.html" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

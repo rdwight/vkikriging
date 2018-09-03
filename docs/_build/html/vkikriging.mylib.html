@@ -1,0 +1,182 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Module of basic, generic functions (mylib) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="(Pseudo-)random sampling schemes on the unit hypercube (sampling)" href="vkikriging.sampling.html" />
+    <link rel="prev" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)" href="vkikriging.kriging_v3.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling.html" title="(Pseudo-)random sampling schemes on the unit hypercube (sampling)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v3.html" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v3.html"
+                        title="previous chapter">Kriging and Gradient-Enhanced Kriging - version 3 (<cite>kriging_v3</cite>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.sampling.html"
+                        title="next chapter">(Pseudo-)random sampling schemes on the unit hypercube (<cite>sampling</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.mylib.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.mylib"></span><div class="section" id="module-of-basic-generic-functions-mylib">
+<h1>Module of basic, generic functions (<cite>mylib</cite>)<a class="headerlink" href="#module-of-basic-generic-functions-mylib" title="Permalink to this headline">¶</a></h1>
+<p>Specifically for Kriging/GEK.</p>
+<dl class="class">
+<dt id="vkikriging.mylib.Timing">
+<em class="property">class </em><code class="descclassname">vkikriging.mylib.</code><code class="descname">Timing</code><span class="sig-paren">(</span><em>verbose=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#Timing"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.Timing" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<p>Very rough timing reporting with minimal code intrusiuon - call
+__init__() once at start, and monitor() to report each time
+increment.      Turn stdout reporting off with verbose=False, times
+are still measured and stored in self.t1 (list).</p>
+<dl class="method">
+<dt id="vkikriging.mylib.Timing.monitor">
+<code class="descname">monitor</code><span class="sig-paren">(</span><em>message</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#Timing.monitor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.Timing.monitor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.mylib.Timing.reinit">
+<code class="descname">reinit</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#Timing.reinit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.Timing.reinit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.covariance_to_stddev">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">covariance_to_stddev</code><span class="sig-paren">(</span><em>Sigma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#covariance_to_stddev"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.covariance_to_stddev" title="Permalink to this definition">¶</a></dt>
+<dd><p>Obtain sample-wise standard deviation for given covariance matrix
+(extract the diagonal and take sqrt).  Useful when plotting error bars.</p>
+<blockquote>
+<div>Sigma - Square, +ve-def, covariance matrix, e.g. P or Sigmahat.</div></blockquote>
+<p>Return array (n).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.enter_debugger_on_uncaught_exception">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">enter_debugger_on_uncaught_exception</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#enter_debugger_on_uncaught_exception"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.enter_debugger_on_uncaught_exception" title="Permalink to this definition">¶</a></dt>
+<dd><p>Automatically entering the debugger on any uncaught exception.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.gek_composite">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">gek_composite</code><span class="sig-paren">(</span><em>x</em>, <em>dx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#gek_composite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.gek_composite" title="Permalink to this definition">¶</a></dt>
+<dd><p>For GEK create composite vector of values and gradients - return
+1d vector xc.  This function defines the order of entries in composite
+vectors, and we must be consistent.      The reverse of this is gek_separate().</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.gek_separate">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">gek_separate</code><span class="sig-paren">(</span><em>xc</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#gek_separate"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.gek_separate" title="Permalink to this definition">¶</a></dt>
+<dd><p>Map composite vector returned by GEK into individual value and
+derivate vectors.  This is useful for postprocessing output of
+gek() for plotting etc.  Return x (n), dx (n x d).</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.get_aspect">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">get_aspect</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#get_aspect"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.get_aspect" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute the aspect-ratio of matplotlib Axis <cite>ax</cite>.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.mylib.iowrite">
+<code class="descclassname">vkikriging.mylib.</code><code class="descname">iowrite</code><span class="sig-paren">(</span><em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/mylib.html#iowrite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.mylib.iowrite" title="Permalink to this definition">¶</a></dt>
+<dd><p>Print file-writing information to stdout (in blue!).</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling.html" title="(Pseudo-)random sampling schemes on the unit hypercube (sampling)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v3.html" title="Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

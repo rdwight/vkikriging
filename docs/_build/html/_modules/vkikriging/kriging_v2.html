@@ -1,0 +1,366 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vkikriging.kriging_v2 &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vkikriging.kriging_v2</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Kriging and Gradient-Enhanced Kriging - version 2 (`kriging_v2`)</span>
+<span class="sd">================================================================</span>
+
+<span class="sd">Simple Kriging and GEK in d-dimensions.</span>
+
+<span class="sd">This differs from `kriging_v1` mainly in that sample locations are calculated</span>
+<span class="sd">separately from prediction locations - the implementation does not follow the Bayesian</span>
+<span class="sd">derivation as closely, but this saves a lot of time and memory.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">solve_triangular</span>
+
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">mylib</span><span class="p">,</span> <span class="n">covariance</span>
+<span class="kn">from</span> <span class="nn">.mylib</span> <span class="k">import</span> <span class="n">Timing</span>
+<span class="kn">from</span> <span class="nn">.covariance</span> <span class="k">import</span> <span class="n">covariance_squaredexponential</span><span class="p">,</span> \
+	<span class="n">covariance_squaredexponential_dxi</span><span class="p">,</span> \
+	<span class="n">covariance_squaredexponential_dxidxi</span>
+
+
+<div class="viewcode-block" id="Kriging"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.Kriging">[docs]</a><span class="k">class</span> <span class="nc">Kriging</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Simple Kriging in d-dimensions for a single variable.  Construction of the</span>
+<span class="sd">	surrogate happens in the __init__() call, after which predictions</span>
+<span class="sd">	can be made with multiple predict() calls.</span>
+
+<span class="sd">	Assumptions:</span>
+<span class="sd">	  - Constant regression at specified mean mu.</span>
+<span class="sd">	  - Same constant error for all observations (sigma_y)</span>
+<span class="sd">	  - Stationarity of the Gaussian process (constant standard </span>
+<span class="sd">		deviation of the prior).</span>
+
+<span class="sd">	Args:  </span>
+<span class="sd">	  xi (ndarray): Sample locations (observations only), shape `(n,d)`</span>
+<span class="sd">	  x (ndarray): Sample values. Shape `n`.</span>
+<span class="sd">	  sigma_y (float): Standard-deviation of observation error.	 Scalar.</span>
+<span class="sd">	  mu_x, sd_x (float): (Sample) mean and standard-deviation of the approximated function,</span>
+<span class="sd">						  used in the prior.  Scalars.</span>
+<span class="sd">	  gamma (float): Correlation coefficient in all directions.	 Scalar.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">mu_x</span><span class="p">,</span> <span class="n">sd_x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+		<span class="c1">### Determine problem dimensions from input.</span>
+		<span class="k">assert</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">xi</span><span class="p">,</span> <span class="n">y</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sigma_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">mu_x</span><span class="p">,</span> <span class="n">sd_x</span><span class="p">,</span> <span class="n">gamma</span>
+
+		<span class="c1">### The gain matrix A = R + P</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span>
+			<span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">sigma_y</span><span class="p">,</span> <span class="mf">1.e-4</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span>
+		<span class="p">)</span> <span class="o">+</span> <span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">covariance_squaredexponential</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Build prior covariance&#39;</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Cholesky factorization of A&#39;</span><span class="p">)</span>
+
+		<span class="c1">### Assuming prior mean constant here.</span>
+		<span class="n">mu_prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span>
+		<span class="n">tmp</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">-</span> <span class="n">mu_prior</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Solve for s&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Kriging.predict"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.Kriging.predict">[docs]</a>	<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xip</span><span class="p">,</span> <span class="n">posterior_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Predict response at locations xip in d-dimensions.</span>
+<span class="sd">		  xip			- Prediction locations, array (m x d)</span>
+<span class="sd">		  posterior_cov - None, return posterior mean only,</span>
+<span class="sd">						  &#39;diag&#39;, diagonal part only, array (m),</span>
+<span class="sd">						  &#39;full&#39;, full cov matrix, array (m x m).</span>
+<span class="sd">		Return</span>
+<span class="sd">		  muhat, [Sigmahat] - Posterior mean, covariance</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">xip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span>
+		<span class="c1">### Compute mean.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
+		<span class="n">P_pd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">covariance_squaredexponential</span><span class="p">(</span><span class="n">xip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Build prediction-data covariance&#39;</span><span class="p">)</span>
+		<span class="n">mu_prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">xip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span>
+		<span class="n">muhat</span> <span class="o">=</span> <span class="n">mu_prior</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P_pd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior mean&#39;</span><span class="p">)</span>
+
+		<span class="c1">### Computation of posterior covariance is much more expensive than the mean,</span>
+		<span class="c1">### only perform if required.</span>
+		<span class="k">if</span> <span class="n">posterior_cov</span><span class="p">:</span>
+			<span class="n">LP</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">P_pd</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">posterior_cov</span> <span class="o">==</span> <span class="s1">&#39;diag&#39;</span><span class="p">:</span>
+				<span class="n">Sigmahat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">LP</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">posterior_cov</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+				<span class="n">P_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">covariance_squaredexponential</span><span class="p">(</span><span class="n">xip</span><span class="p">,</span> <span class="n">xip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+				<span class="n">Sigmahat</span> <span class="o">=</span> <span class="n">P_pp</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">LP</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">LP</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Arg. posterior_cov should be None, &#39;diag&#39; or &#39;full&#39;&quot;</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior covariance&#39;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">muhat</span><span class="p">,</span> <span class="n">Sigmahat</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">muhat</span></div></div>
+
+
+<div class="viewcode-block" id="GEK"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK">[docs]</a><span class="k">class</span> <span class="nc">GEK</span><span class="p">:</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Gradient-Enhanced Kriging (GEK) in d-dimensions for a single</span>
+<span class="sd">	variable.  This differs from kriging_v1.gek() mainly in that</span>
+<span class="sd">	sample locations are calculated separately from prediction</span>
+<span class="sd">	locations - the implementation does not follow the Bayesian</span>
+<span class="sd">	derivation as closely, but this saves a lot of time and memory.</span>
+<span class="sd">	Construction of the surrogate happens in the __init__() call,</span>
+<span class="sd">	after which predictions can be made with one or more predict()</span>
+<span class="sd">	calls.</span>
+
+<span class="sd">	Assumptions (as for Kriging class and...):</span>
+<span class="sd">	  - Gradients observations colocated with value observations.</span>
+<span class="sd">	  - Gradients in all d direcitons observed at all locations.</span>
+<span class="sd">	  - Constant gradient error for all locations and directions.</span>
+<span class="sd">	Constant regression at given mean mu, mean gradient assumed zero.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">sigma_y</span><span class="p">,</span> <span class="n">sigma_dy</span><span class="p">,</span> <span class="n">mu_x</span><span class="p">,</span> <span class="n">sd_x</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+		<span class="c1">### Determine problem dimensions from input.</span>
+		<span class="k">assert</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">assert</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="n">dy</span><span class="o">.</span><span class="n">shape</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span> <span class="o">=</span> <span class="n">xi</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="n">xi</span><span class="o">.</span><span class="n">shape</span>
+		<span class="n">n</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sigma_y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_dy</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span> <span class="o">=</span> <span class="p">(</span>
+			<span class="n">sigma_y</span><span class="p">,</span>
+			<span class="n">sigma_dy</span><span class="p">,</span>
+			<span class="n">mu_x</span><span class="p">,</span>
+			<span class="n">sd_x</span><span class="p">,</span>
+			<span class="n">gamma</span><span class="p">,</span>
+		<span class="p">)</span>
+		<span class="c1">### The gain matrix A = R + P</span>
+		<span class="c1"># Prior</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span> <span class="o">=</span> <span class="n">Timing</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_cov</span><span class="p">(</span><span class="n">xi</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="c1"># Likelihood</span>
+		<span class="n">R</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span>
+			<span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">sigma_y</span><span class="p">,</span> <span class="mf">1.e-4</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+			<span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">sigma_dy</span><span class="p">,</span> <span class="mf">1.e-4</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span>
+		<span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Build prior covariance&#39;</span><span class="p">)</span>
+
+		<span class="c1">### Factorize A.</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">L</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Cholesky factorization of A&#39;</span><span class="p">)</span>
+
+		<span class="c1">### Assuming prior mean constant here (=&gt; gradient mean zero)</span>
+		<span class="n">mu_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">mu_x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="n">d</span><span class="p">)))</span>
+		<span class="n">tmp</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">dy</span><span class="p">)</span> <span class="o">-</span> <span class="n">mu_prior</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span>
+		<span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">s</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Solve for s&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="GEK.predict"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK.predict">[docs]</a>	<span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xip</span><span class="p">,</span> <span class="n">posterior_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Predict response at locations xip in d-dimensions.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">		  xip (ndarray): Prediction locations, shape `(m, d)`</span>
+<span class="sd">		  posterior_cov (str):  None, return posterior mean only,</span>
+<span class="sd">						  &#39;diag&#39;, diagonal part only, array (m),</span>
+<span class="sd">						  &#39;full&#39;, full cov matrix, array (m x m).</span>
+<span class="sd">		  partial (bool): Construct only part of the covariance matrix,</span>
+<span class="sd">						  reduces cost, but allows output of values only,</span>
+<span class="sd">						  not gradients, and not CoV.</span>
+<span class="sd">		Return:</span>
+<span class="sd">		  muhat, [Sigmahat] - Posterior mean, covariance</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">if</span> <span class="n">partial</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+			<span class="k">assert</span> <span class="n">posterior_cov</span> <span class="o">==</span> <span class="kc">None</span>
+		<span class="k">assert</span> <span class="n">xip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span>
+		<span class="n">m</span> <span class="o">=</span> <span class="n">xip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">reinit</span><span class="p">()</span>
+		<span class="n">P_pd</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_cov</span><span class="p">(</span><span class="n">xip</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">xi</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="n">partial</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Build prediction-data covariance&#39;</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">partial</span><span class="p">:</span>
+			<span class="n">mu_prior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">mu_prior</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu_x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)))</span>
+		<span class="n">muhat</span> <span class="o">=</span> <span class="n">mu_prior</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">P_pd</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior mean&#39;</span><span class="p">)</span>
+
+		<span class="c1"># Computation of posterior covariance is much more expensive than the mean,</span>
+		<span class="c1"># only perform if required.</span>
+		<span class="k">if</span> <span class="n">posterior_cov</span><span class="p">:</span>
+			<span class="n">LP</span> <span class="o">=</span> <span class="n">solve_triangular</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">L</span><span class="p">,</span> <span class="n">P_pd</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+			<span class="k">if</span> <span class="n">posterior_cov</span> <span class="o">==</span> <span class="s1">&#39;diag&#39;</span><span class="p">:</span>
+				<span class="n">P_pp_diag</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">composite</span><span class="p">(</span>
+					<span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">m</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">m</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">))</span>
+				<span class="p">)</span>  <span class="c1">### RPD ???</span>
+				<span class="n">Sigmahat</span> <span class="o">=</span> <span class="n">P_pp_diag</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span>
+					<span class="n">LP</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span>
+				<span class="p">)</span>  <span class="c1">### RPD need to fix this...</span>
+			<span class="k">elif</span> <span class="n">posterior_cov</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+				<span class="n">P_pp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sd_x</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">prior_cov</span><span class="p">(</span><span class="n">xip</span><span class="p">,</span> <span class="n">xip</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+				<span class="n">Sigmahat</span> <span class="o">=</span> <span class="n">P_pp</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">LP</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">LP</span><span class="p">)</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Arg. posterior_cov should be None, &#39;diag&#39; or &#39;full&#39;&quot;</span><span class="p">)</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">monitor</span><span class="p">(</span><span class="s1">&#39;Evaluate posterior covariance&#39;</span><span class="p">)</span>
+			<span class="k">return</span> <span class="n">muhat</span><span class="p">,</span> <span class="n">Sigmahat</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">return</span> <span class="n">muhat</span></div>
+
+<div class="viewcode-block" id="GEK.predict_split"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK.predict_split">[docs]</a>	<span class="k">def</span> <span class="nf">predict_split</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xip</span><span class="p">,</span> <span class="n">max_array</span><span class="o">=</span><span class="mf">1e7</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Same as predict(), but splits a very large job into multiple smaller jobs to</span>
+<span class="sd">		save memory.  Arg. max_array specifies the maximum size of the array that should</span>
+<span class="sd">		be created in the process.	Handy when doing Monte-Carlo on the GEK surface.  Only</span>
+<span class="sd">		values, not gradients predicted.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="n">M</span> <span class="o">=</span> <span class="n">xip</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>  <span class="c1"># Number of prediction points</span>
+		<span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>	<span class="c1"># Number of support points</span>
+		<span class="n">row_size</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>  <span class="c1"># Size of single row</span>
+		<span class="n">tot_size</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">*</span> <span class="n">M</span>  <span class="c1"># Size of full matrix (partial version!)</span>
+		<span class="k">if</span> <span class="n">max_array</span> <span class="o">&lt;</span> <span class="n">row_size</span><span class="p">:</span>
+			<span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;max_array must be bigger than row_size: </span><span class="si">%d</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">row_size</span><span class="p">)</span>
+		<span class="n">stepsize</span> <span class="o">=</span> <span class="n">max_array</span> <span class="o">//</span> <span class="n">row_size</span>	 <span class="c1"># Integer!</span>
+		<span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="n">muhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([])</span>
+		<span class="k">while</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="n">M</span><span class="p">:</span>
+			<span class="n">out</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span>
+				<span class="n">xip</span><span class="p">[</span><span class="n">count</span> <span class="p">:</span> <span class="n">count</span> <span class="o">+</span> <span class="n">stepsize</span><span class="p">,</span> <span class="p">:],</span> <span class="n">posterior_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">True</span>
+			<span class="p">)</span>  <span class="c1"># Partial matrix only!</span>
+			<span class="n">count</span> <span class="o">+=</span> <span class="n">stepsize</span>
+			<span class="n">muhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">muhat</span><span class="p">,</span> <span class="n">out</span><span class="p">))</span>
+		<span class="k">return</span> <span class="n">muhat</span></div>
+
+<div class="viewcode-block" id="GEK.composite"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK.composite">[docs]</a>	<span class="k">def</span> <span class="nf">composite</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Create composite vector of values and gradients - return 1d</span>
+<span class="sd">		vector xc.	This function defines the order of entries in</span>
+<span class="sd">		composite vectors, and we must be consistent with prior_cov().</span>
+<span class="sd">		The reverse of this is separate().</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">dx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="s1">&#39;Amount of derivative info wrong.&#39;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">==</span> <span class="n">dx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="s1">&#39;Dimension of derivative info wrong.&#39;</span>
+		<span class="n">n</span> <span class="o">=</span> <span class="n">dx</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">dx</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">n</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="GEK.separate"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK.separate">[docs]</a>	<span class="k">def</span> <span class="nf">separate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xc</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Map composite vector returned by GEK into individual value and</span>
+<span class="sd">		derivate vectors.  This is useful for postprocessing output of</span>
+<span class="sd">		GEK.predict() for plotting etc.	 Return x (n), dx (n x d).</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="n">xc</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">xc</span><span class="o">.</span><span class="n">size</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;Dimension of input wrong.&#39;</span>
+		<span class="n">n</span> <span class="o">=</span> <span class="n">xc</span><span class="o">.</span><span class="n">size</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+		<span class="n">x</span> <span class="o">=</span> <span class="n">xc</span><span class="p">[:</span><span class="n">n</span><span class="p">]</span>	<span class="c1"># Values</span>
+		<span class="n">dx</span> <span class="o">=</span> <span class="n">xc</span><span class="p">[</span><span class="n">n</span><span class="p">:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">n</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span><span class="p">))</span>  <span class="c1"># Gradients</span>
+		<span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">dx</span></div>
+
+<div class="viewcode-block" id="GEK.prior_cov"><a class="viewcode-back" href="../../vkikriging.kriging_v2.html#vkikriging.kriging_v2.GEK.prior_cov">[docs]</a>	<span class="k">def</span> <span class="nf">prior_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">partial</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+		<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">		Construct the prior covariance matrix for GEK - from 4 parts.</span>
+
+<span class="sd">		Args:</span>
+<span class="sd">		  partial (bool): If True construct only the upper two blocks, sufficient</span>
+<span class="sd">						  for prediction of values only (not gradients).</span>
+<span class="sd">		Return:</span>
+<span class="sd">		  P (ndarray): Prior covariance.</span>
+<span class="sd">		&quot;&quot;&quot;</span>
+		<span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">d</span> <span class="o">==</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span>
+		<span class="n">n2</span> <span class="o">=</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">Pc00</span> <span class="o">=</span> <span class="n">covariance_squaredexponential</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">)</span>
+		<span class="k">if</span> <span class="ow">not</span> <span class="n">partial</span><span class="p">:</span>
+			<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(((</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n1</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n2</span><span class="p">))</span>
+			<span class="n">P</span><span class="p">[:</span><span class="n">n1</span><span class="p">,</span> <span class="p">:</span><span class="n">n2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pc00</span>	<span class="c1"># The 4 parts.</span>
+			<span class="n">P</span><span class="p">[:</span><span class="n">n1</span><span class="p">,</span> <span class="n">n2</span><span class="p">:],</span> <span class="n">P</span><span class="p">[</span><span class="n">n1</span><span class="p">:,</span> <span class="p">:</span><span class="n">n2</span><span class="p">]</span> <span class="o">=</span> <span class="n">covariance_squaredexponential_dxi</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">Pc00</span><span class="p">)</span>
+			<span class="n">P</span><span class="p">[</span><span class="n">n1</span><span class="p">:,</span> <span class="n">n2</span><span class="p">:]</span> <span class="o">=</span> <span class="n">covariance_squaredexponential_dxidxi</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">Pc00</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">P</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n1</span><span class="p">,</span> <span class="p">(</span><span class="n">d</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">n2</span><span class="p">))</span>
+			<span class="n">P</span><span class="p">[:,</span> <span class="p">:</span><span class="n">n2</span><span class="p">]</span> <span class="o">=</span> <span class="n">Pc00</span>
+			<span class="n">P</span><span class="p">[:,</span> <span class="n">n2</span><span class="p">:],</span><span class="n">_</span> <span class="o">=</span> <span class="n">covariance_squaredexponential_dxi</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">gamma</span><span class="p">,</span> <span class="n">Pc00</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">P</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,277 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Test functions for (global) optimization problems (test_functions) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Example surrogate modelling in 1d (examples/example1d)" href="example1d.html" />
+    <link rel="prev" title="&lt;no title&gt;" href="vkikriging.sampling_sobol.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.sampling_sobol.html"
+                        title="previous chapter">&lt;no title&gt;</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="example1d.html"
+                        title="next chapter">Example surrogate modelling in 1d (<cite>examples/example1d</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.test_functions.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.test_functions"></span><div class="section" id="test-functions-for-global-optimization-problems-test-functions">
+<h1>Test functions for (global) optimization problems (<cite>test_functions</cite>)<a class="headerlink" href="#test-functions-for-global-optimization-problems-test-functions" title="Permalink to this headline">¶</a></h1>
+<p>Following test-functions implemented: Parabola, NoisyParabola, Rosenbrock, Fourmin,
+Schwefel, Camel.  Each has <cite>f</cite>, <cite>df</cite>, <cite>ddf</cite> function members for value, derivative and
+Hessian; <cite>xmin</cite>, <cite>xmax</cite> describing domain (in each dimension); <cite>xopt</cite> location of
+optimum, <cite>fopt</cite> value of optimum.</p>
+<dl class="class">
+<dt id="vkikriging.test_functions.Camel">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Camel</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#Camel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Camel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Six-hump camel-back test function in 2-d.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.Camel.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Camel.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Camel.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Camel.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Camel.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Camel.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Camel.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Camel.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Camel.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.Fourmin">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Fourmin</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Don’t know the real name of this function, d-dimensions.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.Fourmin.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Fourmin.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Fourmin.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.NoisyParabola">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">NoisyParabola</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#NoisyParabola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.NoisyParabola" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Parabola with noise, d-dimensions.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.NoisyParabola.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#NoisyParabola.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.NoisyParabola.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.NoisyParabola.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#NoisyParabola.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.NoisyParabola.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.NoisyParabola.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#NoisyParabola.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.NoisyParabola.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.Parabola">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Parabola</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Parabola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Parabola" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Parabola, in d-dimensions.      Minimum of 0 at 0 (given +ve def A).</p>
+<blockquote>
+<div>f(x) = 0.5 * x^T A x</div></blockquote>
+<dl class="method">
+<dt id="vkikriging.test_functions.Parabola.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Parabola.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Parabola.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Parabola.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Parabola.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Parabola.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Parabola.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Parabola.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Parabola.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.Rosenbrock">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Rosenbrock</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#Rosenbrock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Rosenbrock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Rosenbrock’s problem 2d only.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.Rosenbrock.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Rosenbrock.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Rosenbrock.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Rosenbrock.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Rosenbrock.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Rosenbrock.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Rosenbrock.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Rosenbrock.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Rosenbrock.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.Schwefel">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Schwefel</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Schwefel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Schwefel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Schwefel test function, d-dimensions.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.Schwefel.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Schwefel.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Schwefel.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Schwefel.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Schwefel.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Schwefel.df" title="Permalink to this definition">¶</a></dt>
+<dd><p>WARNING: derivative at 0 doesn’t exist, algopy will return nan there.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.Schwefel.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Schwefel.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Schwefel.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.TestFunction">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">TestFunction</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#TestFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.TestFunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.test_functions.plot_derivativetest">
+<code class="descclassname">vkikriging.test_functions.</code><code class="descname">plot_derivativetest</code><span class="sig-paren">(</span><em>testfn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#plot_derivativetest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.plot_derivativetest" title="Permalink to this definition">¶</a></dt>
+<dd><p>DEBUGGING CODE: Verify derivatives and Hessians implemented above
+by comparing the full function with it’s 3-term Taylor expansion.
+These are plotted along a line, and should agree with each other
+close to x0, the point at which the expansion is made.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.test_functions.plot_testfunction">
+<code class="descclassname">vkikriging.test_functions.</code><code class="descname">plot_testfunction</code><span class="sig-paren">(</span><em>testfn</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#plot_testfunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.plot_testfunction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Contour plot of 2d test-function <cite>f</cite>.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

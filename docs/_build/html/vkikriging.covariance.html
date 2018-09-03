@@ -1,0 +1,293 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Prior covariance operators (covariance) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)" href="vkikriging.kriging_v1.html" />
+    <link rel="prev" title="vkikriging package" href="vkikriging.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v1.html" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.html" title="vkikriging package"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.html"
+                        title="previous chapter">vkikriging package</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v1.html"
+                        title="next chapter">Kriging and Gradient-Enhanced Kriging - version 1 (<cite>kriging_v1</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.covariance.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.covariance"></span><div class="section" id="prior-covariance-operators-covariance">
+<h1>Prior covariance operators (<cite>covariance</cite>)<a class="headerlink" href="#prior-covariance-operators-covariance" title="Permalink to this headline">¶</a></h1>
+<p>Methods for computing prior covariance matrices explicitly, by computing distances
+between samples, then evaluating the covariance function.  For speed, uses vectorized
+numpy operations exculsively.</p>
+<p>Implemented covariance functions:</p>
+<ul class="simple">
+<li>Squared-exponential (with derivatives for gradient-enhanced Kriging)</li>
+<li>Matern with nu=1/2 (non-differentiable), 3/2 (once diff’ble), and 5/2 (twice diff’ble).</li>
+<li>Identity.</li>
+</ul>
+<p>All covariances have unit standard-deviation; results should be multiplied by the
+desired sigma**2.</p>
+<dl class="function">
+<dt id="vkikriging.covariance.compute_delta_vectors">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">compute_delta_vectors</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#compute_delta_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.compute_delta_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return vectors between all points in xi2 to all points in xi1, d-dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi1</strong> (<em>ndarray</em>) – Sample locations in d-dimensions, shape <cite>(n1, d)</cite>.</li>
+<li><strong>xi2</strong> (<em>ndarray</em>) – Sample locations in d-dimensions, shape <cite>(n2, d)</cite>.      Note, <cite>xi1</cite> and
+<cite>xi2</cite> may be the same array.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><dl class="docutils">
+<dt>Vectors connecting every point in <cite>xi2</cite> with every point in <cite>xi1</cite> (in</dt>
+<dd><p class="first last">that direction).  Shape <cite>(n1,n2,d)</cite>, ordering identical to <cite>xi1</cite>, <cite>xi2</cite>.</p>
+</dd>
+</dl>
+</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.compute_distances_squared">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">compute_distances_squared</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#compute_distances_squared"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.compute_distances_squared" title="Permalink to this definition">¶</a></dt>
+<dd><p>Return matrix of squared Euclidian distance between all pairs of points in d-dimensions.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi1</strong> (<em>ndarray</em>) – Sample locations in d-dimensions, shape <cite>(n1, d)</cite>.</li>
+<li><strong>xi2</strong> (<em>ndarray</em>) – Sample locations in d-dimensions, shape <cite>(n2, d)</cite>.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Shape <cite>(n1,n2)</cite>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariance_squaredexponential">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariance_squaredexponential</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariance_squaredexponential"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariance_squaredexponential" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute prior covariance matrix P, shape <cite>(n1, n2)</cite> with squared-exponential
+covariance and unit standard-deviation.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi1</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n1, d)</cite></li>
+<li><strong>xi2</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n2, d)</cite></li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation function scale parameter - corresponds to 1-standard-
+deviation for a Gaussian.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Covariance matrix for squared-exponential with unit sigma.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariance_squaredexponential_dxi">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariance_squaredexponential_dxi</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em>, <em>P00</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariance_squaredexponential_dxi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariance_squaredexponential_dxi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute matrices of derivatives of squared-exponential covariance function.      Return
+P_01 and P_10 with dimensions of (n1 x d*n2), (n1*d x n2), corresponding to
+differentiation with respect to <cite>xi2</cite> and <cite>xi1</cite> respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi1</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n1, d)</cite></li>
+<li><strong>xi2</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n2, d)</cite></li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation function scale parameter - corresponds to 1-standard-
+deviation for a Gaussian.</li>
+<li><strong>P00</strong> (<em>ndarray</em>) – Output of <cite>covariance_squaredexponential()</cite> with identical <cite>xi1</cite>,`xi2`.
+Saves recalculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Covariance matrix differentiated wrt xi2, shape <cite>(n1, n2*d)</cite>
+P_10 (ndarray): Covariance matrix differentiated wrt xi1, shape <cite>(n1*d, n2)</cite></p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">P_01 (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariance_squaredexponential_dxidxi">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariance_squaredexponential_dxidxi</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em>, <em>P00</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariance_squaredexponential_dxidxi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariance_squaredexponential_dxidxi" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute matrix of 2nd-derivatives of squared-exponential covariance function.  Return
+P_11 (n1 d x n2 d), covariance differentiated wrt both xi1 and xi2.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi1</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n1, d)</cite></li>
+<li><strong>xi2</strong> (<em>ndarray</em>) – Vector of sample locations, shape <cite>(n2, d)</cite></li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation function scale parameter - corresponds to 1-standard-
+deviation for a Gaussian.</li>
+<li><strong>P00</strong> (<em>ndarray</em>) – Output of <cite>covariance_squaredexponential()</cite> with identical <cite>xi1</cite>,`xi2`.
+Saves recalculation.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Covariance matrix differentiated wrt xi1,xi2, shape <cite>(n1*d, n2*d)</cite>.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">P11 (ndarray)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariancefn_identity">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariancefn_identity</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariancefn_identity"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariancefn_identity" title="Permalink to this definition">¶</a></dt>
+<dd><p>White-noise covariance - no correlation between neighbouring points</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariancefn_matern_12">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariancefn_matern_12</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariancefn_matern_12"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariancefn_matern_12" title="Permalink to this definition">¶</a></dt>
+<dd><p>Matern nu=1/2 - continuous, non-differentiable covariance - rough</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariancefn_matern_32">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariancefn_matern_32</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariancefn_matern_32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariancefn_matern_32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Matern nu=3/2 - continuous, non-differentiable covariance - smoother</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.covariance.covariancefn_matern_52">
+<code class="descclassname">vkikriging.covariance.</code><code class="descname">covariancefn_matern_52</code><span class="sig-paren">(</span><em>xi1</em>, <em>xi2</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/covariance.html#covariancefn_matern_52"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.covariance.covariancefn_matern_52" title="Permalink to this definition">¶</a></dt>
+<dd><p>Matern nu=5/2 - continuous, once-differentiable covariance - smoothest</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v1.html" title="Kriging and Gradient-Enhanced Kriging - version 1 (kriging_v1)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.html" title="vkikriging package"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,204 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Kriging and Gradient-Enhanced Kriging - version 3 (kriging_v3) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Module of basic, generic functions (mylib)" href="vkikriging.mylib.html" />
+    <link rel="prev" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)" href="vkikriging.kriging_v2.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.mylib.html" title="Module of basic, generic functions (mylib)"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v2.html" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.kriging_v2.html"
+                        title="previous chapter">Kriging and Gradient-Enhanced Kriging - version 2 (<cite>kriging_v2</cite>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.mylib.html"
+                        title="next chapter">Module of basic, generic functions (<cite>mylib</cite>)</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.kriging_v3.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.kriging_v3"></span><div class="section" id="kriging-and-gradient-enhanced-kriging-version-3-kriging-v3">
+<h1>Kriging and Gradient-Enhanced Kriging - version 3 (<cite>kriging_v3</cite>)<a class="headerlink" href="#kriging-and-gradient-enhanced-kriging-version-3-kriging-v3" title="Permalink to this headline">¶</a></h1>
+<p>Universal Kriging in d-dimensions.  This differs from <cite>kriging_v1</cite> and <cite>kriging_v2</cite>
+which implement only simple Kriging.</p>
+<dl class="function">
+<dt id="vkikriging.kriging_v3.F_linear">
+<code class="descclassname">vkikriging.kriging_v3.</code><code class="descname">F_linear</code><span class="sig-paren">(</span><em>xi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v3.html#F_linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v3.F_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Basis functions for parameterization of non-stationary mean.  This version of the
+function implements a linear basis.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xi</strong> (<em>ndarray</em>) – Coordinates of points in parameter space, shape <cite>(n, d)</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Matrix F shape <cite>(n, M)</cite>, where <cite>M</cite> is the number of basis functions.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">out (ndarray)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.kriging_v3.dF_linear">
+<code class="descclassname">vkikriging.kriging_v3.</code><code class="descname">dF_linear</code><span class="sig-paren">(</span><em>xi</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v3.html#dF_linear"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v3.dF_linear" title="Permalink to this definition">¶</a></dt>
+<dd><p>Derivatives of basis functions defined in F_linear().  (Would be) needed for
+non-stationary mean with GEK.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>xi</strong> (<em>ndarray</em>) – Coordinates of points in parameter space, shape <cite>(n, d)</cite></td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">Tensor of derivatives, shape <cite>(n, M, d)</cite>.</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body">out (ndarray)</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.kriging_v3.kriging">
+<code class="descclassname">vkikriging.kriging_v3.</code><code class="descname">kriging</code><span class="sig-paren">(</span><em>xi</em>, <em>x</em>, <em>observed</em>, <em>sigma_y</em>, <em>F_mean</em>, <em>sd_x</em>, <em>gamma</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/kriging_v3.html#kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.kriging_v3.kriging" title="Permalink to this definition">¶</a></dt>
+<dd><blockquote>
+<div><blockquote>
+<div>Function kriging_v1.kriging() modified for universal Kriging (spatially variable
+mean based on general regression).  This is achived by introducing a function-basis
+F (e.g. <cite>F_linear()</cite>) for representing the <em>variable</em> mean, and new unknown vector
+lambda.  The mean is then lambda . F, and the unknown vector x is augmented:</div></blockquote>
+<p>x_a = [x, lambda],</p>
+</div></blockquote>
+<p>given which the new observation operator is:</p>
+<blockquote>
+<div>H_a = [H, F].</div></blockquote>
+<dl class="docutils">
+<dt>The prior mean (of the Gaussian process) is now always zero, instead of specifying</dt>
+<dd>the mean <cite>mu_x</cite>, the function-basis must be specified in the argument <cite>F_mean</cite>.</dd>
+</dl>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>xi</strong> (<em>ndarray</em>) – Sample locations (both observations and predictions), shape <cite>(n,d)</cite></li>
+<li><strong>x</strong> (<em>ndarray</em>) – Sample values (values not at observation locations are not used).
+Shape <cite>n</cite>.</li>
+<li><strong>observed</strong> (<em>ndarray</em>) – Bool array specifying which values are observed.  Shape <cite>n</cite>,
+<cite>True</cite> - observed, <cite>False</cite> - not observed.</li>
+<li><strong>sigma_y</strong> (<em>float</em>) – Standard-deviation of observation error.  Scalar.</li>
+<li><strong>F_mean</strong> (<em>function</em>) – A function in the template of F_linear(), providing a basis for
+the description of the non-stationary mean (in d-dimensions).</li>
+<li><strong>sd_x</strong> (<em>float</em>) – (Sample) standard-deviation of the approximated function,
+used in the prior.  Scalars.</li>
+<li><strong>gamma</strong> (<em>float</em>) – Correlation coefficient in all directions.  Scalar.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first">Dictionary of prior and posterior statistics.</p>
+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">Return type:</th><td class="field-body"><p class="first last">out (dict)</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.mylib.html" title="Module of basic, generic functions (mylib)"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.kriging_v2.html" title="Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

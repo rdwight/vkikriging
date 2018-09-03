@@ -1,0 +1,253 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>vkikriging.covariance &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="../../_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for vkikriging.covariance</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Prior covariance operators (`covariance`)</span>
+<span class="sd">=========================================</span>
+
+<span class="sd">Methods for computing prior covariance matrices explicitly, by computing distances</span>
+<span class="sd">between samples, then evaluating the covariance function.  For speed, uses vectorized</span>
+<span class="sd">numpy operations exculsively.</span>
+
+<span class="sd">Implemented covariance functions:</span>
+
+<span class="sd">- Squared-exponential (with derivatives for gradient-enhanced Kriging)</span>
+<span class="sd">- Matern with nu=1/2 (non-differentiable), 3/2 (once diff&#39;ble), and 5/2 (twice diff&#39;ble).</span>
+<span class="sd">- Identity.</span>
+
+<span class="sd">All covariances have unit standard-deviation; results should be multiplied by the </span>
+<span class="sd">desired \sigma**2.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="compute_delta_vectors"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.compute_delta_vectors">[docs]</a><span class="k">def</span> <span class="nf">compute_delta_vectors</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Return vectors between all points in xi2 to all points in xi1, d-dimensions.  </span>
+
+<span class="sd">	Args:</span>
+<span class="sd">	  xi1 (ndarray): Sample locations in d-dimensions, shape `(n1, d)`.</span>
+<span class="sd">	  xi2 (ndarray): Sample locations in d-dimensions, shape `(n2, d)`.	 Note, `xi1` and</span>
+<span class="sd">					 `xi2` may be the same array.</span>
+<span class="sd">	Return:</span>
+<span class="sd">	  out (ndarray): Vectors connecting every point in `xi2` with every point in `xi1` (in</span>
+<span class="sd">					 that direction).  Shape `(n1,n2,d)`, ordering identical to `xi1`, `xi2`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span>
+	<span class="n">n2</span> <span class="o">=</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ik,j&#39;</span><span class="p">,</span> <span class="n">xi1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;i,jk&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n1</span><span class="p">),</span> <span class="n">xi2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="compute_distances_squared"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.compute_distances_squared">[docs]</a><span class="k">def</span> <span class="nf">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Return matrix of squared Euclidian distance between all pairs of points in d-dimensions.</span>
+<span class="sd">	</span>
+<span class="sd">	Args:</span>
+<span class="sd">	  xi1 (ndarray): Sample locations in d-dimensions, shape `(n1, d)`.</span>
+<span class="sd">	  xi2 (ndarray): Sample locations in d-dimensions, shape `(n2, d)`.</span>
+<span class="sd">	Return:</span>
+<span class="sd">	  out (ndarray): Shape `(n1,n2)`.	</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">compute_delta_vectors</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="covariance_squaredexponential"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariance_squaredexponential">[docs]</a><span class="k">def</span> <span class="nf">covariance_squaredexponential</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Compute prior covariance matrix P, shape `(n1, n2)` with squared-exponential</span>
+<span class="sd">	covariance and unit standard-deviation.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">	  xi1 (ndarray): Vector of sample locations, shape `(n1, d)`</span>
+<span class="sd">	  xi2 (ndarray): Vector of sample locations, shape `(n2, d)`</span>
+<span class="sd">	  gamma (float): Correlation function scale parameter - corresponds to 1-standard-</span>
+<span class="sd">					 deviation for a Gaussian.</span>
+<span class="sd">	Return:</span>
+<span class="sd">	  out (ndarray): Covariance matrix for squared-exponential with unit sigma.</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">theta</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">theta</span> <span class="o">*</span> <span class="n">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="covariance_squaredexponential_dxi"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariance_squaredexponential_dxi">[docs]</a><span class="k">def</span> <span class="nf">covariance_squaredexponential_dxi</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">P00</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Compute matrices of derivatives of squared-exponential covariance function.	 Return</span>
+<span class="sd">	P_01 and P_10 with dimensions of (n1 x d*n2), (n1*d x n2), corresponding to</span>
+<span class="sd">	differentiation with respect to `xi2` and `xi1` respectively.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">	  xi1 (ndarray): Vector of sample locations, shape `(n1, d)`</span>
+<span class="sd">	  xi2 (ndarray): Vector of sample locations, shape `(n2, d)`</span>
+<span class="sd">	  gamma (float): Correlation function scale parameter - corresponds to 1-standard-</span>
+<span class="sd">					 deviation for a Gaussian.</span>
+<span class="sd">	  P00 (ndarray): Output of `covariance_squaredexponential()` with identical `xi1`,`xi2`.</span>
+<span class="sd">					 Saves recalculation.</span>
+<span class="sd">	Return:</span>
+<span class="sd">	  P_01 (ndarray): Covariance matrix differentiated wrt xi2, shape `(n1, n2*d)`</span>
+<span class="sd">	  P_10 (ndarray): Covariance matrix differentiated wrt xi1, shape `(n1*d, n2)`</span>
+
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span>
+	<span class="n">n2</span> <span class="o">=</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">theta</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="n">tmp0</span> <span class="o">=</span> <span class="p">(</span>
+		<span class="mf">2.</span>
+		<span class="o">*</span> <span class="n">theta</span>
+		<span class="o">*</span> <span class="n">compute_delta_vectors</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">)</span>
+		<span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,k&#39;</span><span class="p">,</span> <span class="n">P00</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+	<span class="p">)</span>
+
+	<span class="n">out1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span> <span class="n">n2</span><span class="p">))</span>  <span class="c1">### Flatten the 3-tensor in 2 different ways.</span>
+	<span class="n">out2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n1</span> <span class="o">*</span> <span class="n">d</span><span class="p">,</span> <span class="n">n2</span><span class="p">))</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+		<span class="n">out1</span><span class="p">[:,</span> <span class="n">i</span><span class="p">::</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp0</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span>
+		<span class="n">out2</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="n">d</span><span class="p">,</span> <span class="p">:]</span> <span class="o">=</span> <span class="o">-</span><span class="n">tmp0</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">out1</span><span class="p">,</span> <span class="n">out2</span></div>
+
+
+<div class="viewcode-block" id="covariance_squaredexponential_dxidxi"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariance_squaredexponential_dxidxi">[docs]</a><span class="k">def</span> <span class="nf">covariance_squaredexponential_dxidxi</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">,</span> <span class="n">P00</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Compute matrix of 2nd-derivatives of squared-exponential covariance function.  Return</span>
+<span class="sd">	P_11 (n1 d x n2 d), covariance differentiated wrt both xi1 and xi2.</span>
+
+<span class="sd">	Args:</span>
+<span class="sd">	  xi1 (ndarray): Vector of sample locations, shape `(n1, d)`</span>
+<span class="sd">	  xi2 (ndarray): Vector of sample locations, shape `(n2, d)`</span>
+<span class="sd">	  gamma (float): Correlation function scale parameter - corresponds to 1-standard-</span>
+<span class="sd">					 deviation for a Gaussian.</span>
+<span class="sd">	  P00 (ndarray): Output of `covariance_squaredexponential()` with identical `xi1`,`xi2`.</span>
+<span class="sd">					 Saves recalculation.</span>
+<span class="sd">	Return:</span>
+<span class="sd">	  P11 (ndarray): Covariance matrix differentiated wrt xi1,xi2, shape `(n1*d, n2*d)`.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="k">assert</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+	<span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">xi1</span><span class="o">.</span><span class="n">shape</span>
+	<span class="n">n2</span> <span class="o">=</span> <span class="n">xi2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+	<span class="n">theta</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+	<span class="n">tmp0</span> <span class="o">=</span> <span class="n">compute_delta_vectors</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">)</span>
+	<span class="n">tmp1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span>
+		<span class="s1">&#39;i,j,kl&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+	<span class="p">)</span> <span class="o">-</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ijk,ijl-&gt;ijkl&#39;</span><span class="p">,</span> <span class="n">tmp0</span><span class="p">,</span> <span class="n">tmp0</span><span class="p">)</span>
+	<span class="n">tmp2</span> <span class="o">=</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">theta</span> <span class="o">*</span> <span class="n">tmp1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">einsum</span><span class="p">(</span><span class="s1">&#39;ij,k,l&#39;</span><span class="p">,</span> <span class="n">P00</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="p">))</span>
+
+	<span class="n">P11</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+		<span class="p">(</span><span class="n">d</span> <span class="o">*</span> <span class="n">n1</span><span class="p">,</span> <span class="n">d</span> <span class="o">*</span> <span class="n">n2</span><span class="p">)</span>
+	<span class="p">)</span>  <span class="c1">### Flatten the 4-tensor to an (d*n1 x d*n2) matrix</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+		<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+			<span class="n">P11</span><span class="p">[</span><span class="n">i</span><span class="p">::</span><span class="n">d</span><span class="p">,</span> <span class="n">j</span><span class="p">::</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="n">tmp2</span><span class="p">[:,</span> <span class="p">:,</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span>
+	<span class="k">return</span> <span class="n">P11</span></div>
+
+
+<div class="viewcode-block" id="covariancefn_identity"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariancefn_identity">[docs]</a><span class="k">def</span> <span class="nf">covariancefn_identity</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;White-noise covariance - no correlation between neighbouring points&quot;&quot;&quot;</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">d</span> <span class="o">&lt;</span> <span class="mf">1.e-8</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="covariancefn_matern_12"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariancefn_matern_12">[docs]</a><span class="k">def</span> <span class="nf">covariancefn_matern_12</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Matern nu=1/2 - continuous, non-differentiable covariance - rough&quot;&quot;&quot;</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">))</span>
+	<span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">d</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="covariancefn_matern_32"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariancefn_matern_32">[docs]</a><span class="k">def</span> <span class="nf">covariancefn_matern_32</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Matern nu=3/2 - continuous, non-differentiable covariance - smoother&quot;&quot;&quot;</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">))</span>
+	<span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="covariancefn_matern_52"><a class="viewcode-back" href="../../vkikriging.covariance.html#vkikriging.covariance.covariancefn_matern_52">[docs]</a><span class="k">def</span> <span class="nf">covariancefn_matern_52</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">,</span> <span class="n">gamma</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;Matern nu=5/2 - continuous, once-differentiable covariance - smoothest&quot;&quot;&quot;</span>
+	<span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">compute_distances_squared</span><span class="p">(</span><span class="n">xi1</span><span class="p">,</span> <span class="n">xi2</span><span class="p">))</span>
+	<span class="k">return</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">gamma</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">d</span> <span class="o">**</span> <span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">3</span> <span class="o">*</span> <span class="n">gamma</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span>
+		<span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">d</span> <span class="o">/</span> <span class="n">gamma</span>
+	<span class="p">)</span></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>

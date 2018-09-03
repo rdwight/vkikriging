@@ -1,0 +1,143 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>(Pseudo-)random sampling schemes on the unit hypercube (sampling) &#8212; vkikriging 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="&lt;no title&gt;" href="vkikriging.sampling_sobol.html" />
+    <link rel="prev" title="Module of basic, generic functions (mylib)" href="vkikriging.mylib.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.mylib.html" title="Module of basic, generic functions (mylib)"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" accesskey="U">vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="vkikriging.mylib.html"
+                        title="previous chapter">Module of basic, generic functions (<cite>mylib</cite>)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="vkikriging.sampling_sobol.html"
+                        title="next chapter">&lt;no title&gt;</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/vkikriging.sampling.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <span class="target" id="module-vkikriging.sampling"></span><div class="section" id="pseudo-random-sampling-schemes-on-the-unit-hypercube-sampling">
+<h1>(Pseudo-)random sampling schemes on the unit hypercube (<cite>sampling</cite>)<a class="headerlink" href="#pseudo-random-sampling-schemes-on-the-unit-hypercube-sampling" title="Permalink to this headline">¶</a></h1>
+<p>All implemented in d-dimensions.</p>
+<dl class="function">
+<dt id="vkikriging.sampling.halton">
+<code class="descclassname">vkikriging.sampling.</code><code class="descname">halton</code><span class="sig-paren">(</span><em>nsamples</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/sampling.html#halton"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.sampling.halton" title="Permalink to this definition">¶</a></dt>
+<dd><p>Halton sequence on [0,1]^d of length nsamples.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.sampling.latin_hypercube">
+<code class="descclassname">vkikriging.sampling.</code><code class="descname">latin_hypercube</code><span class="sig-paren">(</span><em>nsamples</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/sampling.html#latin_hypercube"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.sampling.latin_hypercube" title="Permalink to this definition">¶</a></dt>
+<dd><p>Latin Hypercube sampling using uniform distribution on the interval
+[0.0, 1.0].  Returns nsamples x d array of sample coordinates.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.sampling.random_uniform">
+<code class="descclassname">vkikriging.sampling.</code><code class="descname">random_uniform</code><span class="sig-paren">(</span><em>nsamples</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/sampling.html#random_uniform"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.sampling.random_uniform" title="Permalink to this definition">¶</a></dt>
+<dd><p>Random coordinates on unit hypercube.</p>
+</dd></dl>
+
+<dl class="function">
+<dt id="vkikriging.sampling.sobol">
+<code class="descclassname">vkikriging.sampling.</code><code class="descname">sobol</code><span class="sig-paren">(</span><em>nsamples</em>, <em>d</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/sampling.html#sobol"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.sampling.sobol" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sobol sequence on [0,1]^d, skipping first 1000 samples.</p>
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="vkikriging.mylib.html" title="Module of basic, generic functions (mylib)"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="vkikriging.html" >vkikriging package</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, R.P. Dwight.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+    </div>
+  </body>
+</html>
