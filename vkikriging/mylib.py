@@ -1,63 +1,12 @@
 """
-Module of basic, generic functions
-==================================
+Module of basic, generic functions (`mylib`)
+============================================
 
 Specifically for Kriging/GEK.
 """
 import numpy as np
 import copy, sys, time
 from operator import sub
-
-
-def forward_sub_single(A, b):
-	"""Solve Ax = b for A lower triangular for single RHS b."""
-	if A.shape[0] != b.shape[0]:
-		raise ValueError("A and b must be compatible.")
-	x = np.zeros(A.shape[1])
-	for j, row in enumerate(A):
-		pivot = row[j]
-		if np.abs(pivot) < 1.e-12:
-			raise ValueError("Matrix has a zero diagonal element.")
-		x[j] = (b[j] - np.dot(row, x)) / pivot
-	return x
-
-
-def backward_sub_single(A, b):
-	"""Solve Ax = b for A upper triangular for single RHS b."""
-	if A.shape[0] != b.shape[0]:
-		raise ValueError("A and b must be compatible.")
-	x = np.zeros(A.shape[1])
-	rev = list(range(A.shape[0]))
-	rev.reverse()
-	for j in rev:
-		row = A[j]
-		pivot = row[j]
-		if np.abs(pivot) < 1.e-12:
-			raise ValueError("Matrix has a zero diagonal element.")
-		x[j] = (b[j] - np.dot(row, x)) / pivot
-	return x
-
-
-def tri_sub_generic(A, b, sub_single_fn):
-	"""Helper fn for forward_sub() and backward_sub(), enabling multiple
-	RHSs in both cases."""
-	if b.ndim == 1:
-		return sub_single_fn(A, b)
-	else:
-		outp = np.zeros(b.shape)
-		for i in range(b.shape[1]):
-			outp[:, i] = sub_single_fn(A, b[:, i])
-		return outp
-
-
-def forward_sub(A, b):
-	"""Solve Ax = b for A lower triangular, possible multiple RHSs."""
-	return tri_sub_generic(A, b, forward_sub_single)
-
-
-def backward_sub(A, b):
-	"""Solve Ax = b for A upper triangular, possible multiple RHSs."""
-	return tri_sub_generic(A, b, backward_sub_single)
 
 
 def gek_composite(x, dx):
@@ -96,16 +45,6 @@ def covariance_to_stddev(Sigma):
 	### np.abs() is there just for robustness - rounding error can result in
 	### diagonal values in Sigma of e.g -1e-14.
 	return np.sqrt(np.abs(np.diag(Sigma)))
-
-
-def sample_process(mu, Sigma, nsamples=1):
-	"""
-	Generate random samples from a multivariate normal with a given
-	mean mu and covariance matrix Sigma.  E.g. A sample from the
-	posterior process: S = sample_process(muhat, Sigmahat)
-	Return array (nsamples x n).
-	"""
-	return np.random.multivariate_normal(mu, Sigma, nsamples)
 
 
 class Timing:

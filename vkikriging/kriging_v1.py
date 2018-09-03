@@ -1,6 +1,6 @@
 """
-Kriging and Gradient-Enhanced Kriging - version 1
-=================================================
+Kriging and Gradient-Enhanced Kriging - version 1 (`kriging_v1`)
+================================================================
 
 Simple Kriging and GEK in d-dimensions.
 
@@ -179,41 +179,3 @@ def gek(xi, x, dx, observed, sigma_y, sigma_dy, mu_x, sd_x, gamma, verbose=True)
         'Sigmahat': Sigmahat,
     }  # Posterior
 
-
-
-def covariance_to_stddev(Sigma):
-    """
-    Obtain sample-wise standard deviation for given covariance matrix
-    (extract the diagonal and take sqrt).  Useful when plotting error bars.
-      Sigma - Square, +ve-def, covariance matrix, e.g. P or Sigmahat.
-
-	Args:
-	  Sigma (ndarray): Covariance matrix, shape `(n,n)`.
-    Return:
-	  out (ndarray): Standard-deviation, shape `n`.
-    """
-    ### np.abs() is there just for robustness - rounding error can result in
-    ### diagonal values in Sigma of e.g -1e-14.
-    return np.sqrt(np.abs(np.diag(Sigma)))
-
-
-def sample_process(mu, Sigma, nsamples=1):
-    """
-    Generate random samples from a multivariate normal with a given
-    mean `mu` and covariance matrix `Sigma`.  E.g. A sample from the
-    posterior process: S = sample_process(muhat, Sigmahat)
-
-	Args:
-	  mu (ndarray): Mean of process, sampled at `n` points.
-	  Sigma (ndarray): Covariance of process, sampled at `n` points.
-	
-    Return:
-	  out (ndarray): Sample of process, shape `(nsamples, n)`.
-    """
-    return np.random.multivariate_normal(mu, Sigma, nsamples)
-
-
-if __name__ == '__main__':
-
-    ### For examples of usage see kriging_example1d.py, kriging_example2d.py.
-    pass

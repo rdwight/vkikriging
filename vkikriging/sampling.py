@@ -1,6 +1,6 @@
 """
-(Pseudo-)random sampling schemes on the unit hypercube
-======================================================
+(Pseudo-)random sampling schemes on the unit hypercube (`sampling`)
+===================================================================
 
 All implemented in d-dimensions.
 """

@@ -1,29 +1,27 @@
 """
-Kriging and Gradient-Enhanced Kriging - version 3
-=================================================
+Kriging and Gradient-Enhanced Kriging - version 3 (`kriging_v3`)
+================================================================
 
-Universal Kriging in d-dimensions.
+Universal Kriging in d-dimensions.  This differs from `kriging_v1` and `kriging_v2`
+which implement only simple Kriging.
 
-This differs from `kriging_v1` and `kriging_v2` which implement only simple Kriging.
 """
 import numpy as np
 
 from .mylib import Timing
-from .covariance import covariance_squaredexponential, \
-	covariance_squaredexponential_dxi, \
-	covariance_squaredexponential_dxidxi
+from .covariance import covariance_squaredexponential, covariance_squaredexponential_dxi, covariance_squaredexponential_dxidxi
 
 
 def F_linear(xi):
     """
-	Basis functions for parameterization of non-stationary mean.  This version of the
+    Basis functions for parameterization of non-stationary mean.  This version of the
     function implements a linear basis.
 
-	Args:
+    Args:
       xi (ndarray): Coordinates of points in parameter space, shape `(n, d)`
-	Return
+    Return:
       out (ndarray): Matrix F shape `(n, M)`, where `M` is the number of basis functions.
-	"""
+    """
     n, d = xi.shape
     return np.hstack((np.ones((n, 1)), xi))
 
@@ -33,9 +31,9 @@ def dF_linear(xi):
     Derivatives of basis functions defined in F_linear().  (Would be) needed for
     non-stationary mean with GEK.
 
-	Args:
+    Args:
       xi (ndarray): Coordinates of points in parameter space, shape `(n, d)`
-	Return
+    Return:
       out (ndarray): Tensor of derivatives, shape `(n, M, d)`.
     """
     n, d = xi.shape
@@ -48,10 +46,10 @@ def dF_linear(xi):
 
 def kriging(xi, x, observed, sigma_y, F_mean, sd_x, gamma):
     """
-    Function kriging_v1.kriging() modified for universal Kriging
-    (variable mean based on general regression).  This is achived by
-    introducing a function basis F for representing the variable mean,
-    and new unknowns \lambda, with which the vector x is augmented:
+	Function kriging_v1.kriging() modified for universal Kriging (spatially variable
+	mean based on general regression).  This is achived by introducing a function-basis
+	F (e.g. `F_linear()`) for representing the *variable* mean, and new unknown vector
+	\lambda.  The mean is then \lambda . F, and the unknown vector x is augmented:
 
       x_a = [x, \lambda],
 
@@ -59,8 +57,8 @@ def kriging(xi, x, observed, sigma_y, F_mean, sd_x, gamma):
 
       H_a = [H, F].
  
-    Prior mean is always zero, and is replaced by a new argument:
-      F_mean - 
+    The prior mean (of the Gaussian process) is now always zero, instead of specifying
+	the mean `mu_x`, the function-basis must be specified in the argument `F_mean`.
 
     Args:  
       xi (ndarray): Sample locations (both observations and predictions), shape `(n,d)`
@@ -77,7 +75,8 @@ def kriging(xi, x, observed, sigma_y, F_mean, sd_x, gamma):
 
     Return:
       out (dict): Dictionary of prior and posterior statistics.
-    """
+
+	"""
     ### Determine problem dimensions from input.
     n, d = xi.shape  #
     H = np.identity(n)[observed]  # Observation operator
@@ -125,6 +124,5 @@ def kriging(xi, x, observed, sigma_y, F_mean, sd_x, gamma):
         'muahat': muahat,
         'covahat': covahat,  # Posterior (augmented)
         'muhat': muhat,
-        'Sigmahat': covhat,   # Posterior
-    } 
-
+        'Sigmahat': covhat,  # Posterior
+    }
