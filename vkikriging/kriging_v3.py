@@ -1,6 +1,6 @@
 """
-Kriging and Gradient-Enhanced Kriging - version 3 (`kriging_v3`)
-================================================================
+Universal Kriging - version 3 (`kriging_v3`)
+============================================
 
 Universal Kriging in d-dimensions.  This differs from `kriging_v1` and `kriging_v2`
 which implement only simple Kriging.

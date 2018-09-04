@@ -20,5 +20,13 @@ twine upload --repository-url https://upload.pypi.org/legacy/ dist/*
 
 rm -rf build dist vkikriging.egg-info
 
+# Make documentation, publish on webpage
+cd docs
+make html; make html
+cp Notes_v3_2018-08.pdf _build/html
+scp -r _build/html rdwight@lamp06.tudelft.nl:public_html/vkikriging
+ssh rdwight@lamp06.tudelft.nl "chmod -R 755 public_html"
+
 # Push changes to Github
 git push origin master
+

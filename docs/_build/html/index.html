@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Kriging and Gradient-Enhanced Kriging for VKI Lecture Series &#8212; vkikriging 1.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -25,8 +17,7 @@
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="vkikriging package" href="vkikriging.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -47,7 +38,18 @@
   <h3><a href="#">Table Of Contents</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Kriging and Gradient-Enhanced Kriging for VKI Lecture Series</a><ul>
-<li><a class="reference internal" href="#contents">Contents</a></li>
+<li><a class="reference internal" href="#installing">Installing</a><ul>
+<li><a class="reference internal" href="#with-git-recommended-for-educational-use">With git (recommended for educational use)</a></li>
+<li><a class="reference internal" href="#with-pip-recommended-for-applications">With pip (recommended for applications)</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#usage">Usage</a><ul>
+<li><a class="reference internal" href="#basic-usage-with-plotting-1d">Basic usage with plotting (1d)</a></li>
+<li><a class="reference internal" href="#basic-usage-with-plotting-2d">Basic usage with plotting (2d)</a></li>
+<li><a class="reference internal" href="#standard-usage">Standard usage</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#documentation-and-api-reference">Documentation and API reference</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
@@ -65,12 +67,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -83,19 +87,122 @@
             
   <div class="section" id="kriging-and-gradient-enhanced-kriging-for-vki-lecture-series">
 <h1>Kriging and Gradient-Enhanced Kriging for VKI Lecture Series<a class="headerlink" href="#kriging-and-gradient-enhanced-kriging-for-vki-lecture-series" title="Permalink to this headline">¶</a></h1>
-<div class="admonition warning">
-<p class="first admonition-title">Warning</p>
-<p class="last">Exmaple of a warning.</p>
+<p>Python module implementing interpolation with <em>Gaussian process regression</em>, a.k.a. <em>Kriging</em>.
+Features:</p>
+<ul class="simple">
+<li>Arbetrary dimensional interpolation.</li>
+<li>Use of gradients in reconstruction (<em>Gradient Enhanced Kriging</em>).</li>
+<li>Simple and univeral Kriging.</li>
+<li>Implementation follows Bayesian derivation of Kriging, descibed in the <a class="reference external" href="./Notes_v3_2018-08.pdf">tutorial</a>.</li>
+</ul>
+<div class="admonition note">
+<p class="first admonition-title">Note</p>
+<p class="last">This code was written for the <a class="reference external" href="https://www.vki.ac.be/">Von Karman Institute</a> lecture series on multi-disciplinary
+optimization, and is primarily intended as educational (accompanying the <a class="reference external" href="./Notes_v3_2018-08.pdf">tutorial</a>).
+As such it sacrifices many possible code optimizations to clarity.  If you are planning
+to use it for <strong>applications</strong>, it may still be fast enough, depending on the size of your
+data.  Preferentially use routines in the module <a class="reference internal" href="vkikriging.kriging_v2.html"><span class="doc">Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)</span></a>.</p>
 </div>
-<div class="section" id="contents">
-<h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="installing">
+<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="with-git-recommended-for-educational-use">
+<h3>With git (recommended for educational use)<a class="headerlink" href="#with-git-recommended-for-educational-use" title="Permalink to this headline">¶</a></h3>
+<p>The package is pure Python 3.  To get the source, clone the <a class="reference external" href="https://github.com/rdwight/vkikriging">GitHub</a> repository:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">rdwight</span><span class="o">/</span><span class="n">vkikriging</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>and add <cite>vkikriging</cite> to your <code class="docutils literal notranslate"><span class="pre">PYTHONPATH</span></code> (e.g. with <code class="docutils literal notranslate"><span class="pre">bash</span></code>):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>export PYTHONPATH=/home/fred/vkikriging:$PYTHONPATH
+</pre></div>
+</div>
+<p>You’ll need <code class="docutils literal notranslate"><span class="pre">numpy</span></code>, <code class="docutils literal notranslate"><span class="pre">scipy</span></code>, <code class="docutils literal notranslate"><span class="pre">matplotlib</span></code> and <code class="docutils literal notranslate"><span class="pre">algopy</span></code> (automatic differentiation).
+I recommend using an <a class="reference external" href="https://www.anaconda.com/download/">Anaconda</a> Python install.</p>
+</div>
+<div class="section" id="with-pip-recommended-for-applications">
+<h3>With pip (recommended for applications)<a class="headerlink" href="#with-pip-recommended-for-applications" title="Permalink to this headline">¶</a></h3>
+<p>The package is distributed via PyPI, so just use:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">vkikriging</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="usage">
+<h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="basic-usage-with-plotting-1d">
+<h3>Basic usage with plotting (1d)<a class="headerlink" href="#basic-usage-with-plotting-1d" title="Permalink to this headline">¶</a></h3>
+<p>Using the class <a class="reference internal" href="example1d.html#examples.example1d.Example1d" title="examples.example1d.Example1d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example1d</span></code></a> you only have to specify a function, its derivative,
+the locations of sample points, and parameters for the Kriging/GEK model.  The following
+approximates a sine curve on [-5,15] with 5 samples with gradients:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="kn">from</span> <span class="nn">examples.example1d</span> <span class="k">import</span> <span class="n">Example1d</span>
+
+<span class="c1"># 1. Initialize the function to approxiate, samples and Kriging paramters</span>
+<span class="n">ex1d</span> <span class="o">=</span> <span class="n">Example1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">,</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
+                 <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sigma_d</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">sigma_dg</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                 <span class="n">xi_min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">xi_max</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.</span>
+<span class="n">ex1d</span><span class="o">.</span><span class="n">build_surrogate_v1</span><span class="p">()</span>
+
+<span class="c1"># 3. Plot the model, use any of all of the plot_* functions</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">6</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+<span class="n">ex1d</span><span class="o">.</span><span class="n">plot_gek</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ex1d</span><span class="o">.</span><span class="n">plot_posterior_samples_gek</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ex1d</span><span class="o">.</span><span class="n">plot_reference</span><span class="p">(</span><span class="n">ax</span><span class="p">)</span>
+<span class="n">ex1d</span><span class="o">.</span><span class="n">plot_observed_gradients</span><span class="p">(</span><span class="n">ax</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="mf">1.</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Some timing information is printed to <code class="docutils literal notranslate"><span class="pre">stdout</span></code>, and the following figure is plotted:</p>
+<img alt="_images/Figure_1.png" src="_images/Figure_1.png" />
+<p>The black curve is the exact function, black circles and lines are samples of the function
+and its derivative.  The heavy blue line is the GEK mean, with 1,2,3-standard-deviation
+regions in light blue.  The thin blue lines are 10 independent samples from the
+predictive distribution.</p>
+</div>
+<div class="section" id="basic-usage-with-plotting-2d">
+<h3>Basic usage with plotting (2d)<a class="headerlink" href="#basic-usage-with-plotting-2d" title="Permalink to this headline">¶</a></h3>
+<p>To achieve basic interpolation in 2d use the class <a class="reference internal" href="example2d.html#examples.example2d.Example2d" title="examples.example2d.Example2d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example2d</span></code></a>.  This expects an
+object describing the function, with attributes <code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">df</span></code>, <code class="docutils literal notranslate"><span class="pre">xmin</span></code>, <code class="docutils literal notranslate"><span class="pre">xmax</span></code>,
+and <code class="docutils literal notranslate"><span class="pre">xopt</span></code>.  See examples in <a class="reference internal" href="vkikriging.test_functions.html"><span class="doc">Test functions for (global) optimization problems (test_functions)</span></a>.  To approximate a
+parabola with Sobol samples:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vkikriging.test_functions</span> <span class="k">import</span> <span class="n">Parabola</span>
+<span class="kn">from</span> <span class="nn">vkikriging.sampling</span> <span class="k">import</span> <span class="n">sobol</span>
+<span class="kn">from</span> <span class="nn">examples.example2d</span> <span class="k">import</span> <span class="n">Example2d</span>
+
+<span class="c1"># 1. Initialize the function to approxiate, samples and Kriging paramters</span>
+<span class="n">f</span> <span class="o">=</span> <span class="n">Parabola</span><span class="p">()</span>
+<span class="n">xi</span> <span class="o">=</span> <span class="n">sobol</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">xmin</span>
+<span class="n">ex2d</span> <span class="o">=</span> <span class="n">Example2d</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">sigma_d</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">sigma_dg</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+
+<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.</span>
+<span class="n">ex2d</span><span class="o">.</span><span class="n">build_surrogate_v1</span><span class="p">()</span>
+
+<span class="c1"># 3. Plot the model</span>
+<span class="n">ex2d</span><span class="o">.</span><span class="n">plot_contours</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Which produces the following figure:</p>
+<img alt="_images/Figure_2.png" src="_images/Figure_2.png" />
+<p>The red circle is the exact minimum, and the crosses are the minima approximated by Kriging/GEK.</p>
+</div>
+<div class="section" id="standard-usage">
+<h3>Standard usage<a class="headerlink" href="#standard-usage" title="Permalink to this headline">¶</a></h3>
+<p>You’ll</p>
+</div>
+</div>
+<div class="section" id="documentation-and-api-reference">
+<h2>Documentation and API reference<a class="headerlink" href="#documentation-and-api-reference" title="Permalink to this headline">¶</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="vkikriging.html">vkikriging package</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.covariance.html">Prior covariance operators (<cite>covariance</cite>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.kriging_v1.html">Kriging and Gradient-Enhanced Kriging - version 1 (<cite>kriging_v1</cite>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.kriging_v2.html">Kriging and Gradient-Enhanced Kriging - version 2 (<cite>kriging_v2</cite>)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="vkikriging.kriging_v3.html">Kriging and Gradient-Enhanced Kriging - version 3 (<cite>kriging_v3</cite>)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="vkikriging.kriging_v3.html">Universal Kriging - version 3 (<cite>kriging_v3</cite>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.mylib.html">Module of basic, generic functions (<cite>mylib</cite>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.sampling.html">(Pseudo-)random sampling schemes on the unit hypercube (<cite>sampling</cite>)</a></li>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.test_functions.html">Test functions for (global) optimization problems (<cite>test_functions</cite>)</a></li>
@@ -139,7 +246,7 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, R.P. Dwight.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

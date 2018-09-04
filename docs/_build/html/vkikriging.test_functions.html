@@ -4,20 +4,12 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
   <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title>Test functions for (global) optimization problems (test_functions) &#8212; vkikriging 1.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
-    <script type="text/javascript">
-      var DOCUMENTATION_OPTIONS = {
-        URL_ROOT:    './',
-        VERSION:     '1.0',
-        COLLAPSE_INDEX: false,
-        FILE_SUFFIX: '.html',
-        HAS_SOURCE:  true,
-        SOURCELINK_SUFFIX: '.txt'
-      };
-    </script>
+    <script type="text/javascript" src="_static/documentation_options.js"></script>
     <script type="text/javascript" src="_static/jquery.js"></script>
     <script type="text/javascript" src="_static/underscore.js"></script>
     <script type="text/javascript" src="_static/doctools.js"></script>
@@ -26,8 +18,7 @@
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Example surrogate modelling in 1d (examples/example1d)" href="example1d.html" />
     <link rel="prev" title="&lt;no title&gt;" href="vkikriging.sampling_sobol.html" /> 
-  </head>
-  <body>
+  </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
       <ul>
@@ -64,12 +55,14 @@
    </div>
 <div id="searchbox" style="display: none" role="search">
   <h3>Quick search</h3>
+    <div class="searchformwrapper">
     <form class="search" action="search.html" method="get">
-      <div><input type="text" name="q" /></div>
-      <div><input type="submit" value="Go" /></div>
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
+    </div>
 </div>
 <script type="text/javascript">$('#searchbox').show(0);</script>
         </div>
@@ -89,7 +82,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.Camel">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Camel</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#Camel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Camel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Six-hump camel-back test function in 2-d.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.Camel.ddf">
@@ -111,7 +104,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.Fourmin">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Fourmin</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Don’t know the real name of this function, d-dimensions.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.Fourmin.ddf">
@@ -133,7 +126,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.NoisyParabola">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">NoisyParabola</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#NoisyParabola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.NoisyParabola" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Parabola with noise, d-dimensions.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.NoisyParabola.ddf">
@@ -155,7 +148,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.Parabola">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Parabola</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Parabola"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Parabola" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Parabola, in d-dimensions.      Minimum of 0 at 0 (given +ve def A).</p>
 <blockquote>
 <div>f(x) = 0.5 * x^T A x</div></blockquote>
@@ -179,7 +172,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.Rosenbrock">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Rosenbrock</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#Rosenbrock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Rosenbrock" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Rosenbrock’s problem 2d only.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.Rosenbrock.ddf">
@@ -201,7 +194,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.Schwefel">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">Schwefel</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Schwefel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Schwefel" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
 <p>Schwefel test function, d-dimensions.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.Schwefel.ddf">
@@ -224,7 +217,7 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
 <dt id="vkikriging.test_functions.TestFunction">
 <em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">TestFunction</code><a class="reference internal" href="_modules/vkikriging/test_functions.html#TestFunction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.TestFunction" title="Permalink to this definition">¶</a></dt>
-<dd><p>Bases: <code class="xref py py-class docutils literal"><span class="pre">object</span></code></p>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 </dd></dl>
 
 <dl class="function">
@@ -271,7 +264,7 @@ close to x0, the point at which the expansion is made.</p>
     </div>
     <div class="footer" role="contentinfo">
         &#169; Copyright 2018, R.P. Dwight.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.6.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4.
     </div>
   </body>
 </html>

@@ -45,12 +45,8 @@ class Example2d:
 	  # 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.
 	  ex2d.build_surrogate_v1()
 
-	  # 3. Plot the model, use any of all of the plot_* functions
-	  fig = plt.figure(figsize=(10, 6))
-	  ax = fig.add_subplot(111)
-	  ex1d.plot_kriging(ax)
-	  ex1d.plot_posterior_samples_kriging(ax)
-	  ex1d.plot_reference(ax)	
+	  # 3. Plot the model
+	  ex2d.plot_contours()
 	"""
 	def __init__(self, f, xi_samples, gamma, sigma_d, sigma_dg):
 		self.d = 2
@@ -97,8 +93,22 @@ class Example2d:
 			self.mu, self.std, self.gamma
 		)
 
-	def plot_contour(self):
-		fig = plt.figure(figsize=(12,12))		
+	def build_surrogate_v2(self):
+		# WORKING
+		self.krig = kriging_v2.Kriging(xi_o, x[:n_o], sigma_d, mu, std, gamma)
+		self.gek = kriging_v2.GEK(
+				xi_o, x[:n_o], dx[:n_o, :], sigma_d, sigma_dg, mu, std, gamma
+			)
+		k2mean, k2cov = krig.predict(xi_r, posterior_cov='full')
+		kr = k2mean[:n_r].reshape((N, N))
+		mse = np.sqrt(np.abs(np.diag(k2cov[:n_r, :n_r]))).reshape((N, N))
+
+	def build_surrogate_v3(self):
+		# WORKING
+	    self.gek = None
+
+	def plot_contours(self):
+		fig = plt.figure(figsize=(9,9))		
 		axes = fig.subplots(nrows=3, ncols=3, sharex=True, sharey=True, squeeze=False)
 		levels = np.linspace(np.min(self.x), np.max(self.x), 21)
 		# Top row - values of f
@@ -161,24 +171,10 @@ class Example2d:
 		fig.suptitle('')
 		
 		iowrite('example2d.pdf')
-		fig.savefig('example2d.pdf')
-
-	def build_surrogate_v2(self):
-		if not gek:
-			krig = kriging_v2.Kriging(xi_o, x[:n_o], sigma_d, mu, std, gamma)
-		else:
-			krig = kriging_v2.GEK(
-				xi_o, x[:n_o], dx[:n_o, :], sigma_d, sigma_dg, mu, std, gamma
-			)
-		k2mean, k2cov = krig.predict(xi_r, posterior_cov='full')
-		kr = k2mean[:n_r].reshape((N, N))
-		mse = np.sqrt(np.abs(np.diag(k2cov[:n_r, :n_r]))).reshape((N, N))
-
-	def build_surrogate_v3(self):
-		pass
+		fig.savefig('Figure_2.png')
 
 
-# Run it.
+		# Run it.
 if __name__ == '__main__':
 	enter_debugger_on_uncaught_exception()
 
