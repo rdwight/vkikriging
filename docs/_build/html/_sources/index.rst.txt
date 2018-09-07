@@ -98,7 +98,7 @@ Higher-dimensions/expensive functions
 -------------------------------------
 
 The following code performs general-purpose sampling and reconstruction of a
-``d``-dimensional function.  Convergence analysis 
+``d``-dimensional function, with convergence analysis on number of samples:
 
 .. literalinclude:: ../examples/example3.py
 
