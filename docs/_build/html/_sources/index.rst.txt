@@ -97,6 +97,8 @@ The red circle is the exact minimum, and the crosses are the minima approximated
 Higher-dimensions/expensive functions
 -------------------------------------
 
+The following code performs general-purpose sampling and reconstruction of a
+``d``-dimensional function.  Convergence analysis 
 
 .. literalinclude:: ../examples/example3.py
 

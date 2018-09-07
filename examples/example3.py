@@ -43,11 +43,9 @@ for nsample in nsamples:
     gek_mses += [np.sum((gek_predict - y_exact)**2) / nsample]
 
 ### 3. Plot the convergence
-plt.plot(np.log10(nsamples), np.log10(k_mses), '-+b',
-         label='Kriging')
-plt.plot(np.log10(nsamples), np.log10(gek_mses), '-+r',
-         label='GEK')
-plt.xlabel('$\log_{10}(\mathrm{samples})$')
-plt.ylabel('$\log_{10}(\mathrm{mse})$')
+plt.loglog(nsamples, k_mses, '-+b', label='Kriging')
+plt.loglog(nsamples, gek_mses, '-+r', label='GEK')
+plt.xlabel('number of samples')
+plt.ylabel('mean-squared error')
 plt.legend()
 plt.show()
