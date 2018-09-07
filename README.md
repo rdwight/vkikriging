@@ -12,4 +12,4 @@ Features:
 Module [webpage](https://aerodynamics.lr.tudelft.nl/~rdwight/vkikriging/) with full documentation is 
 https://aerodynamics.lr.tudelft.nl/~rdwight/vkikriging/
 
-*[R. Dwight](email:richard.dwight@gmail.com) 2018*
+*R. Dwight <richard.dwight@gmail.com> 2018*
