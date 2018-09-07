@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Example surrogate modelling in 1d (examples/example1d)" href="example1d.html" />
+    <link rel="next" title="Example surrogate modelling in 1d (vkikriging.example1d)" href="example1d.html" />
     <link rel="prev" title="&lt;no title&gt;" href="vkikriging.sampling_sobol.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
@@ -29,7 +29,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+          <a href="example1d.html" title="Example surrogate modelling in 1d (vkikriging.example1d)"
              accesskey="N">next</a> |</li>
         <li class="right" >
           <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
@@ -45,7 +45,7 @@
                         title="previous chapter">&lt;no title&gt;</a></p>
   <h4>Next topic</h4>
   <p class="topless"><a href="example1d.html"
-                        title="next chapter">Example surrogate modelling in 1d (<cite>examples/example1d</cite>)</a></p>
+                        title="next chapter">Example surrogate modelling in 1d (<cite>vkikriging.example1d</cite>)</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -76,7 +76,7 @@
   <span class="target" id="module-vkikriging.test_functions"></span><div class="section" id="test-functions-for-global-optimization-problems-test-functions">
 <h1>Test functions for (global) optimization problems (<cite>test_functions</cite>)<a class="headerlink" href="#test-functions-for-global-optimization-problems-test-functions" title="Permalink to this headline">¶</a></h1>
 <p>Following test-functions implemented: Parabola, NoisyParabola, Rosenbrock, Fourmin,
-Schwefel, Camel.  Each has <cite>f</cite>, <cite>df</cite>, <cite>ddf</cite> function members for value, derivative and
+Schwefel, Camel, GenzFunction1.  Each has <cite>f</cite>, <cite>df</cite>, <cite>ddf</cite> function members for value, derivative and
 Hessian; <cite>xmin</cite>, <cite>xmax</cite> describing domain (in each dimension); <cite>xopt</cite> location of
 optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="class">
@@ -119,6 +119,28 @@ optimum, <cite>fopt</cite> value of optimum.</p>
 <dl class="method">
 <dt id="vkikriging.test_functions.Fourmin.f">
 <code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#Fourmin.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.Fourmin.f" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="vkikriging.test_functions.GenzFunction1">
+<em class="property">class </em><code class="descclassname">vkikriging.test_functions.</code><code class="descname">GenzFunction1</code><span class="sig-paren">(</span><em>d=2</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#GenzFunction1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.GenzFunction1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#vkikriging.test_functions.TestFunction" title="vkikriging.test_functions.TestFunction"><code class="xref py py-class docutils literal notranslate"><span class="pre">vkikriging.test_functions.TestFunction</span></code></a></p>
+<p>Genz functions, in d-dimensions.</p>
+<dl class="method">
+<dt id="vkikriging.test_functions.GenzFunction1.ddf">
+<code class="descname">ddf</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#GenzFunction1.ddf"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.GenzFunction1.ddf" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.GenzFunction1.df">
+<code class="descname">df</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#GenzFunction1.df"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.GenzFunction1.df" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="vkikriging.test_functions.GenzFunction1.f">
+<code class="descname">f</code><span class="sig-paren">(</span><em>xx</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/test_functions.html#GenzFunction1.f"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.test_functions.GenzFunction1.f" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -253,7 +275,7 @@ close to x0, the point at which the expansion is made.</p>
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+          <a href="example1d.html" title="Example surrogate modelling in 1d (vkikriging.example1d)"
              >next</a> |</li>
         <li class="right" >
           <a href="vkikriging.sampling_sobol.html" title="&lt;no title&gt;"
