@@ -1,4 +1,4 @@
-.. automodule:: examples.example2d
+.. automodule:: vkikriging.example2d
     :members:
     :undoc-members:
     :show-inheritance:

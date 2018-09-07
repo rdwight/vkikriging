@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Example surrogate modelling in 1d (examples/example1d) &#8212; vkikriging 1.0 documentation</title>
+    <title>Example surrogate modelling in 1d (vkikriging.example1d) &#8212; vkikriging 1.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -72,13 +72,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <span class="target" id="module-examples.example1d"></span><div class="section" id="example-surrogate-modelling-in-1d-examples-example1d">
-<h1>Example surrogate modelling in 1d (<cite>examples/example1d</cite>)<a class="headerlink" href="#example-surrogate-modelling-in-1d-examples-example1d" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-vkikriging.example1d"></span><div class="section" id="example-surrogate-modelling-in-1d-vkikriging-example1d">
+<h1>Example surrogate modelling in 1d (<cite>vkikriging.example1d</cite>)<a class="headerlink" href="#example-surrogate-modelling-in-1d-vkikriging-example1d" title="Permalink to this headline">¶</a></h1>
 <p>Class to do surrogate modelling and plotting of a function <cite>f</cite> of one variable, with
 derivative, another function <cite>df</cite>.</p>
 <dl class="class">
-<dt id="examples.example1d.Example1d">
-<em class="property">class </em><code class="descclassname">examples.example1d.</code><code class="descname">Example1d</code><span class="sig-paren">(</span><em>f</em>, <em>df</em>, <em>xi_samples</em>, <em>gamma</em>, <em>sigma_d</em>, <em>sigma_dg</em>, <em>xi_min</em>, <em>xi_max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d">
+<em class="property">class </em><code class="descclassname">vkikriging.example1d.</code><code class="descname">Example1d</code><span class="sig-paren">(</span><em>f</em>, <em>df</em>, <em>xi_samples</em>, <em>gamma</em>, <em>sigma_d</em>, <em>sigma_dg</em>, <em>xi_min</em>, <em>xi_max</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Example demonstrating how to use kriging and gek, versions v1,v2 and v3, in 1d.
 For a function <cite>f</cite> (e.g. analytically defined), with gradient <cite>df</cite>.</p>
@@ -114,61 +114,61 @@ and plotting.</li>
 </pre></div>
 </div>
 <dl class="method">
-<dt id="examples.example1d.Example1d.build_surrogate_v1">
-<code class="descname">build_surrogate_v1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.build_surrogate_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.build_surrogate_v1" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.build_surrogate_v1">
+<code class="descname">build_surrogate_v1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.build_surrogate_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.build_surrogate_v1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.build_surrogate_v2">
-<code class="descname">build_surrogate_v2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.build_surrogate_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.build_surrogate_v2" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.build_surrogate_v2">
+<code class="descname">build_surrogate_v2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.build_surrogate_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.build_surrogate_v2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.build_surrogate_v3">
-<code class="descname">build_surrogate_v3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.build_surrogate_v3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.build_surrogate_v3" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.build_surrogate_v3">
+<code class="descname">build_surrogate_v3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.build_surrogate_v3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.build_surrogate_v3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_gek">
-<code class="descname">plot_gek</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_gek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_gek" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_gek">
+<code class="descname">plot_gek</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_gek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_gek" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot GEK response with 3 sigmas in matplotlib axis <cite>ax</cite>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_kriging">
-<code class="descname">plot_kriging</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_kriging" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_kriging">
+<code class="descname">plot_kriging</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_kriging" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot Kriging response with 3 sigmas in matplotlib axis <cite>ax</cite>.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_observed_gradients">
-<code class="descname">plot_observed_gradients</code><span class="sig-paren">(</span><em>ax</em>, <em>length=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_observed_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_observed_gradients" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_observed_gradients">
+<code class="descname">plot_observed_gradients</code><span class="sig-paren">(</span><em>ax</em>, <em>length=0.1</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_observed_gradients"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_observed_gradients" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot observations of gradients in matplotlib axis <cite>ax</cite> as little bars of length
 <cite>length</cite>.  Attempt to keep lengths of bars constant, which depends on plot aspect
 ratio - therefore use this plotting function last.</p>
 </dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_posterior_samples_gek">
-<code class="descname">plot_posterior_samples_gek</code><span class="sig-paren">(</span><em>ax</em>, <em>nsamples=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_posterior_samples_gek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_posterior_samples_gek" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_posterior_samples_gek">
+<code class="descname">plot_posterior_samples_gek</code><span class="sig-paren">(</span><em>ax</em>, <em>nsamples=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_posterior_samples_gek"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_posterior_samples_gek" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_posterior_samples_kriging">
-<code class="descname">plot_posterior_samples_kriging</code><span class="sig-paren">(</span><em>ax</em>, <em>nsamples=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_posterior_samples_kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_posterior_samples_kriging" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_posterior_samples_kriging">
+<code class="descname">plot_posterior_samples_kriging</code><span class="sig-paren">(</span><em>ax</em>, <em>nsamples=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_posterior_samples_kriging"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_posterior_samples_kriging" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example1d.Example1d.plot_reference">
-<code class="descname">plot_reference</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#Example1d.plot_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.Example1d.plot_reference" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.Example1d.plot_reference">
+<code class="descname">plot_reference</code><span class="sig-paren">(</span><em>ax</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#Example1d.plot_reference"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.Example1d.plot_reference" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot ground-truth reference and observations in matplotlib axis <cite>ax</cite>.</p>
 </dd></dl>
 
 </dd></dl>
 
 <dl class="function">
-<dt id="examples.example1d.plot1d_stddevregion">
-<code class="descclassname">examples.example1d.</code><code class="descname">plot1d_stddevregion</code><span class="sig-paren">(</span><em>ax</em>, <em>xi</em>, <em>mu</em>, <em>mse</em>, <em>label=None</em>, <em>color='r'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example1d.html#plot1d_stddevregion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example1d.plot1d_stddevregion" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example1d.plot1d_stddevregion">
+<code class="descclassname">vkikriging.example1d.</code><code class="descname">plot1d_stddevregion</code><span class="sig-paren">(</span><em>ax</em>, <em>xi</em>, <em>mu</em>, <em>mse</em>, <em>label=None</em>, <em>color='r'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example1d.html#plot1d_stddevregion"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example1d.plot1d_stddevregion" title="Permalink to this definition">¶</a></dt>
 <dd><p>Plot mean, and nice shaded regions representing +- 1,2,3-sigma for 1d plots.</p>
 <table class="docutils field-list" frame="void" rules="none">
 <col class="field-name" />

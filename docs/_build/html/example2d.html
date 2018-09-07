@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Example surrogate modelling in 2d (examples/example2d) &#8212; vkikriging 1.0 documentation</title>
+    <title>Example surrogate modelling in 2d (vkikriging.example2d) &#8212; vkikriging 1.0 documentation</title>
     <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
     <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <script type="text/javascript" src="_static/documentation_options.js"></script>
@@ -16,7 +16,7 @@
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Example surrogate modelling in 1d (examples/example1d)" href="example1d.html" /> 
+    <link rel="prev" title="Example surrogate modelling in 1d (vkikriging.example1d)" href="example1d.html" /> 
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
       <h3>Navigation</h3>
@@ -28,7 +28,7 @@
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+          <a href="example1d.html" title="Example surrogate modelling in 1d (vkikriging.example1d)"
              accesskey="P">previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li> 
       </ul>
@@ -37,7 +37,7 @@
         <div class="sphinxsidebarwrapper">
   <h4>Previous topic</h4>
   <p class="topless"><a href="example1d.html"
-                        title="previous chapter">Example surrogate modelling in 1d (<cite>examples/example1d</cite>)</a></p>
+                        title="previous chapter">Example surrogate modelling in 1d (<cite>vkikriging.example1d</cite>)</a></p>
   <div role="note" aria-label="source link">
     <h3>This Page</h3>
     <ul class="this-page-menu">
@@ -65,13 +65,13 @@
         <div class="bodywrapper">
           <div class="body" role="main">
             
-  <span class="target" id="module-examples.example2d"></span><div class="section" id="example-surrogate-modelling-in-2d-examples-example2d">
-<h1>Example surrogate modelling in 2d (<cite>examples/example2d</cite>)<a class="headerlink" href="#example-surrogate-modelling-in-2d-examples-example2d" title="Permalink to this headline">¶</a></h1>
+  <span class="target" id="module-vkikriging.example2d"></span><div class="section" id="example-surrogate-modelling-in-2d-vkikriging-example2d">
+<h1>Example surrogate modelling in 2d (<cite>vkikriging.example2d</cite>)<a class="headerlink" href="#example-surrogate-modelling-in-2d-vkikriging-example2d" title="Permalink to this headline">¶</a></h1>
 <p>Class to do surrogate modelling and plotting of a function <cite>f</cite> of two variables, with
 derivative, another function <cite>df</cite>.</p>
 <dl class="class">
-<dt id="examples.example2d.Example2d">
-<em class="property">class </em><code class="descclassname">examples.example2d.</code><code class="descname">Example2d</code><span class="sig-paren">(</span><em>f</em>, <em>xi_samples</em>, <em>gamma</em>, <em>sigma_d</em>, <em>sigma_dg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example2d.html#Example2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example2d.Example2d" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example2d.Example2d">
+<em class="property">class </em><code class="descclassname">vkikriging.example2d.</code><code class="descname">Example2d</code><span class="sig-paren">(</span><em>f</em>, <em>xi_samples</em>, <em>gamma</em>, <em>sigma_d</em>, <em>sigma_dg</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example2d.html#Example2d"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example2d.Example2d" title="Permalink to this definition">¶</a></dt>
 <dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
 <p>Example demonstrating how to use kriging and gek, versions v1,v2 and v3, in 2d.
 For a function <cite>f</cite> (e.g. analytically defined), with gradient <cite>df</cite>.</p>
@@ -108,23 +108,23 @@ and bounds in each coodinate direction.  See
 </pre></div>
 </div>
 <dl class="method">
-<dt id="examples.example2d.Example2d.build_surrogate_v1">
-<code class="descname">build_surrogate_v1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example2d.html#Example2d.build_surrogate_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example2d.Example2d.build_surrogate_v1" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example2d.Example2d.build_surrogate_v1">
+<code class="descname">build_surrogate_v1</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example2d.html#Example2d.build_surrogate_v1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example2d.Example2d.build_surrogate_v1" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example2d.Example2d.build_surrogate_v2">
-<code class="descname">build_surrogate_v2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example2d.html#Example2d.build_surrogate_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example2d.Example2d.build_surrogate_v2" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example2d.Example2d.build_surrogate_v2">
+<code class="descname">build_surrogate_v2</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example2d.html#Example2d.build_surrogate_v2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example2d.Example2d.build_surrogate_v2" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example2d.Example2d.build_surrogate_v3">
-<code class="descname">build_surrogate_v3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example2d.html#Example2d.build_surrogate_v3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example2d.Example2d.build_surrogate_v3" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example2d.Example2d.build_surrogate_v3">
+<code class="descname">build_surrogate_v3</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example2d.html#Example2d.build_surrogate_v3"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example2d.Example2d.build_surrogate_v3" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 <dl class="method">
-<dt id="examples.example2d.Example2d.plot_contours">
-<code class="descname">plot_contours</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/examples/example2d.html#Example2d.plot_contours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#examples.example2d.Example2d.plot_contours" title="Permalink to this definition">¶</a></dt>
+<dt id="vkikriging.example2d.Example2d.plot_contours">
+<code class="descname">plot_contours</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/vkikriging/example2d.html#Example2d.plot_contours"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#vkikriging.example2d.Example2d.plot_contours" title="Permalink to this definition">¶</a></dt>
 <dd></dd></dl>
 
 </dd></dl>
@@ -147,7 +147,7 @@ and bounds in each coodinate direction.  See
           <a href="py-modindex.html" title="Python Module Index"
              >modules</a> |</li>
         <li class="right" >
-          <a href="example1d.html" title="Example surrogate modelling in 1d (examples/example1d)"
+          <a href="example1d.html" title="Example surrogate modelling in 1d (vkikriging.example1d)"
              >previous</a> |</li>
         <li class="nav-item nav-item-0"><a href="index.html">vkikriging 1.0 documentation</a> &#187;</li> 
       </ul>

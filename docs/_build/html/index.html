@@ -46,7 +46,7 @@
 <li><a class="reference internal" href="#usage">Usage</a><ul>
 <li><a class="reference internal" href="#basic-usage-with-plotting-1d">Basic usage with plotting (1d)</a></li>
 <li><a class="reference internal" href="#basic-usage-with-plotting-2d">Basic usage with plotting (2d)</a></li>
-<li><a class="reference internal" href="#standard-usage">Standard usage</a></li>
+<li><a class="reference internal" href="#higher-dimensions-expensive-functions">Higher-dimensions/expensive functions</a></li>
 </ul>
 </li>
 <li><a class="reference internal" href="#documentation-and-api-reference">Documentation and API reference</a></li>
@@ -128,22 +128,28 @@ I recommend using an <a class="reference external" href="https://www.anaconda.co
 </div>
 <div class="section" id="usage">
 <h2>Usage<a class="headerlink" href="#usage" title="Permalink to this headline">¶</a></h2>
+<p>For experimenting with <em>cheap</em> functions in 1d and 2d, use classes <a class="reference internal" href="example1d.html#vkikriging.example1d.Example1d" title="vkikriging.example1d.Example1d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example1d</span></code></a> and
+class <a class="reference internal" href="example2d.html#vkikriging.example2d.Example2d" title="vkikriging.example2d.Example2d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example2d</span></code></a>, which have a simple interface and do some convenient plotting.
+For expensive functions and/or higher dimensions use directly the routines of
+<a class="reference internal" href="vkikriging.kriging_v2.html"><span class="doc">Kriging and Gradient-Enhanced Kriging - version 2 (kriging_v2)</span></a>.</p>
 <div class="section" id="basic-usage-with-plotting-1d">
 <h3>Basic usage with plotting (1d)<a class="headerlink" href="#basic-usage-with-plotting-1d" title="Permalink to this headline">¶</a></h3>
-<p>Using the class <a class="reference internal" href="example1d.html#examples.example1d.Example1d" title="examples.example1d.Example1d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example1d</span></code></a> you only have to specify a function, its derivative,
+<p>Using the class <a class="reference internal" href="example1d.html#vkikriging.example1d.Example1d" title="vkikriging.example1d.Example1d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example1d</span></code></a> you only have to specify a function, its derivative,
 the locations of sample points, and parameters for the Kriging/GEK model.  The following
 approximates a sine curve on [-5,15] with 5 samples with gradients:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
 <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
-<span class="kn">from</span> <span class="nn">examples.example1d</span> <span class="k">import</span> <span class="n">Example1d</span>
+<span class="kn">from</span> <span class="nn">vkikriging.example1d</span> <span class="k">import</span> <span class="n">Example1d</span>
 
-<span class="c1"># 1. Initialize the function to approxiate, samples and Kriging paramters</span>
+<span class="c1"># 1. Initialize the function to approxiate, samples</span>
+<span class="c1">#    and Kriging paramters</span>
 <span class="n">ex1d</span> <span class="o">=</span> <span class="n">Example1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">,</span>
                  <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span>
                  <span class="n">gamma</span><span class="o">=</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">sigma_d</span><span class="o">=</span><span class="mf">0.001</span><span class="p">,</span> <span class="n">sigma_dg</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
                  <span class="n">xi_min</span><span class="o">=-</span><span class="mi">5</span><span class="p">,</span> <span class="n">xi_max</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
 
-<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.</span>
+<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.  For v1,</span>
+<span class="c1">#    v2 GEK model is also built.</span>
 <span class="n">ex1d</span><span class="o">.</span><span class="n">build_surrogate_v1</span><span class="p">()</span>
 
 <span class="c1"># 3. Plot the model, use any of all of the plot_* functions</span>
@@ -165,20 +171,23 @@ predictive distribution.</p>
 </div>
 <div class="section" id="basic-usage-with-plotting-2d">
 <h3>Basic usage with plotting (2d)<a class="headerlink" href="#basic-usage-with-plotting-2d" title="Permalink to this headline">¶</a></h3>
-<p>To achieve basic interpolation in 2d use the class <a class="reference internal" href="example2d.html#examples.example2d.Example2d" title="examples.example2d.Example2d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example2d</span></code></a>.  This expects an
+<p>To achieve basic interpolation in 2d use the class <a class="reference internal" href="example2d.html#vkikriging.example2d.Example2d" title="vkikriging.example2d.Example2d"><code class="xref any py py-class docutils literal notranslate"><span class="pre">Example2d</span></code></a>.  This expects an
 object describing the function, with attributes <code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">df</span></code>, <code class="docutils literal notranslate"><span class="pre">xmin</span></code>, <code class="docutils literal notranslate"><span class="pre">xmax</span></code>,
 and <code class="docutils literal notranslate"><span class="pre">xopt</span></code>.  See examples in <a class="reference internal" href="vkikriging.test_functions.html"><span class="doc">Test functions for (global) optimization problems (test_functions)</span></a>.  To approximate a
 parabola with Sobol samples:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">vkikriging.test_functions</span> <span class="k">import</span> <span class="n">Parabola</span>
 <span class="kn">from</span> <span class="nn">vkikriging.sampling</span> <span class="k">import</span> <span class="n">sobol</span>
-<span class="kn">from</span> <span class="nn">examples.example2d</span> <span class="k">import</span> <span class="n">Example2d</span>
+<span class="kn">from</span> <span class="nn">vkikriging.example2d</span> <span class="k">import</span> <span class="n">Example2d</span>
 
-<span class="c1"># 1. Initialize the function to approxiate, samples and Kriging paramters</span>
+<span class="c1"># 1. Initialize the function to approxiate, samples</span>
+<span class="c1">#    and Kriging paramters</span>
 <span class="n">f</span> <span class="o">=</span> <span class="n">Parabola</span><span class="p">()</span>
 <span class="n">xi</span> <span class="o">=</span> <span class="n">sobol</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">f</span><span class="o">.</span><span class="n">xmin</span><span class="p">)</span> <span class="o">+</span> <span class="n">f</span><span class="o">.</span><span class="n">xmin</span>
-<span class="n">ex2d</span> <span class="o">=</span> <span class="n">Example2d</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">sigma_d</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">sigma_dg</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
+<span class="n">ex2d</span> <span class="o">=</span> <span class="n">Example2d</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">xi</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">sigma_d</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+				 <span class="n">sigma_dg</span><span class="o">=</span><span class="mf">0.01</span><span class="p">)</span>
 
-<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.</span>
+<span class="c1"># 2. Build the Kriging model, v1, v2 or v3.</span>
+<span class="c1">#    For v1, v2 GEK model is also built.</span>
 <span class="n">ex2d</span><span class="o">.</span><span class="n">build_surrogate_v1</span><span class="p">()</span>
 
 <span class="c1"># 3. Plot the model</span>
@@ -189,9 +198,65 @@ parabola with Sobol samples:</p>
 <img alt="_images/Figure_2.png" src="_images/Figure_2.png" />
 <p>The red circle is the exact minimum, and the crosses are the minima approximated by Kriging/GEK.</p>
 </div>
-<div class="section" id="standard-usage">
-<h3>Standard usage<a class="headerlink" href="#standard-usage" title="Permalink to this headline">¶</a></h3>
-<p>You’ll</p>
+<div class="section" id="higher-dimensions-expensive-functions">
+<h3>Higher-dimensions/expensive functions<a class="headerlink" href="#higher-dimensions-expensive-functions" title="Permalink to this headline">¶</a></h3>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="kn">from</span> <span class="nn">vkikriging.kriging_v2</span> <span class="k">import</span> <span class="n">Kriging</span><span class="p">,</span> <span class="n">GEK</span>
+<span class="kn">from</span> <span class="nn">vkikriging.sampling</span> <span class="k">import</span> <span class="n">halton</span><span class="p">,</span> <span class="n">random_uniform</span>
+
+<span class="c1">### 1. Example test-function (Genz function 1 - oscillatory)</span>
+<span class="n">dimension</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="k">def</span> <span class="nf">f1</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">9.</span><span class="o">/</span><span class="mi">5</span> <span class="o">*</span> <span class="n">xi</span><span class="p">))</span>
+<span class="k">def</span> <span class="nf">df1</span><span class="p">(</span><span class="n">xi</span><span class="p">):</span>
+    <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mf">9.</span><span class="o">/</span><span class="mi">5</span> <span class="o">*</span> <span class="n">xi</span><span class="p">))</span> <span class="o">*</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">dimension</span><span class="p">)</span> <span class="o">*</span> <span class="mf">9.</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span>
+
+<span class="c1">### 2. Reconstruction with varying number of samples</span>
+<span class="n">k_mses</span><span class="p">,</span> <span class="n">gek_mses</span> <span class="o">=</span> <span class="p">[],</span> <span class="p">[]</span>
+<span class="n">nsamples</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">200</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span><span class="mi">1000</span><span class="p">]</span>
+
+<span class="k">for</span> <span class="n">nsample</span> <span class="ow">in</span> <span class="n">nsamples</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">f</span><span class="s1">&#39;nsample = </span><span class="si">{nsample}</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="c1"># 2a. Choose samples (pseudo-random) on [0,1]^d, and</span>
+    <span class="c1">#     evaluate function and derivatives</span>
+    <span class="n">xi_samples</span> <span class="o">=</span> <span class="n">halton</span><span class="p">(</span><span class="n">nsample</span><span class="p">,</span> <span class="n">dimension</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f1</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">xi_samples</span><span class="p">])</span> 
+    <span class="n">dy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">df1</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">xi_samples</span><span class="p">])</span>
+
+    <span class="c1"># 2b. Build the Kriging/GEK models</span>
+    <span class="n">kmodel</span> <span class="o">=</span> <span class="n">Kriging</span><span class="p">(</span><span class="n">xi_samples</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">sigma_y</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                     <span class="n">mu_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sd_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    <span class="n">gekmodel</span> <span class="o">=</span> <span class="n">GEK</span><span class="p">(</span><span class="n">xi_samples</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">dy</span><span class="p">,</span> <span class="n">sigma_y</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span>
+                   <span class="n">sigma_dy</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">mu_x</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">sd_x</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">gamma</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+    
+    <span class="c1"># 2c. Use Kriging models to predict function at 1000</span>
+    <span class="c1">#     random points</span>
+    <span class="n">xi_predict</span> <span class="o">=</span> <span class="n">random_uniform</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">dimension</span><span class="p">)</span>
+    <span class="n">y_exact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">f1</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">xi_predict</span><span class="p">])</span>
+    <span class="n">k_predict</span> <span class="o">=</span> <span class="n">kmodel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xi_predict</span><span class="p">,</span> <span class="n">posterior_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">gek_predict</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">gekmodel</span><span class="o">.</span><span class="n">separate</span><span class="p">(</span>
+        <span class="n">gekmodel</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xi_predict</span><span class="p">,</span> <span class="n">posterior_cov</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+
+    <span class="c1"># 2d. Compute mean-squared error of predition</span>
+    <span class="n">k_mses</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">k_predict</span> <span class="o">-</span> <span class="n">y_exact</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">nsample</span><span class="p">]</span>
+    <span class="n">gek_mses</span> <span class="o">+=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">gek_predict</span> <span class="o">-</span> <span class="n">y_exact</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="n">nsample</span><span class="p">]</span>
+
+<span class="c1">### 3. Plot the convergence</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">nsamples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">k_mses</span><span class="p">),</span> <span class="s1">&#39;-+b&#39;</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Kriging&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">nsamples</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log10</span><span class="p">(</span><span class="n">gek_mses</span><span class="p">),</span> <span class="s1">&#39;-+r&#39;</span><span class="p">,</span>
+         <span class="n">label</span><span class="o">=</span><span class="s1">&#39;GEK&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\mathrm</span><span class="si">{samples}</span><span class="s1">)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$\log_</span><span class="si">{10}</span><span class="s1">(\mathrm</span><span class="si">{mse}</span><span class="s1">)$&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Which produces the following figure:</p>
+<img alt="_images/Figure_3.png" src="_images/Figure_3.png" />
 </div>
 </div>
 <div class="section" id="documentation-and-api-reference">
@@ -208,8 +273,8 @@ parabola with Sobol samples:</p>
 <li class="toctree-l2"><a class="reference internal" href="vkikriging.test_functions.html">Test functions for (global) optimization problems (<cite>test_functions</cite>)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="example1d.html">Example surrogate modelling in 1d (<cite>examples/example1d</cite>)</a></li>
-<li class="toctree-l1"><a class="reference internal" href="example2d.html">Example surrogate modelling in 2d (<cite>examples/example2d</cite>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example1d.html">Example surrogate modelling in 1d (<cite>vkikriging.example1d</cite>)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="example2d.html">Example surrogate modelling in 2d (<cite>vkikriging.example2d</cite>)</a></li>
 </ul>
 </div>
 </div>

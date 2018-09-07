@@ -55,34 +55,19 @@ The package is distributed via PyPI, so just use::
 Usage
 =====
 
+For experimenting with *cheap* functions in 1d and 2d, use classes :any:`Example1d` and
+class :any:`Example2d`, which have a simple interface and do some convenient plotting.
+For expensive functions and/or higher dimensions use directly the routines of
+:any:`vkikriging.kriging_v2`.
+
 Basic usage with plotting (1d)
 ------------------------------
 
 Using the class :any:`Example1d` you only have to specify a function, its derivative,
 the locations of sample points, and parameters for the Kriging/GEK model.  The following
-approximates a sine curve on [-5,15] with 5 samples with gradients::
+approximates a sine curve on [-5,15] with 5 samples with gradients:
 
-  import numpy as np
-  import matplotlib.pyplot as plt
-  from examples.example1d import Example1d
-
-  # 1. Initialize the function to approxiate, samples and Kriging paramters
-  ex1d = Example1d(np.sin, np.cos,
-                   np.linspace(0, 10, 5),
-                   gamma=1.0, sigma_d=0.001, sigma_dg=0.01,
-                   xi_min=-5, xi_max=15)
-		   
-  # 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.
-  ex1d.build_surrogate_v1()
-  
-  # 3. Plot the model, use any of all of the plot_* functions
-  fig = plt.figure(figsize=(10, 6))
-  ax = fig.add_subplot(111)
-  ex1d.plot_gek(ax)
-  ex1d.plot_posterior_samples_gek(ax)
-  ex1d.plot_reference(ax)
-  ex1d.plot_observed_gradients(ax, length=1.)
-  plt.show()
+.. literalinclude:: ../examples/example1.py
 
 Some timing information is printed to ``stdout``, and the following figure is plotted:
 
@@ -99,22 +84,9 @@ Basic usage with plotting (2d)
 To achieve basic interpolation in 2d use the class :any:`Example2d`.  This expects an
 object describing the function, with attributes ``f``, ``df``, ``xmin``, ``xmax``,
 and ``xopt``.  See examples in :any:`vkikriging.test_functions`.  To approximate a
-parabola with Sobol samples::
+parabola with Sobol samples:
 
-  from vkikriging.test_functions import Parabola
-  from vkikriging.sampling import sobol
-  from examples.example2d import Example2d
-
-  # 1. Initialize the function to approxiate, samples and Kriging paramters
-  f = Parabola()
-  xi = sobol(4, 2) * (f.xmax - f.xmin) + f.xmin
-  ex2d = Example2d(f, xi, gamma=1., sigma_d=0.01, sigma_dg=0.01)
-
-  # 2. Build the Kriging model, v1, v2 or v3.  For v1, v2 GEK model is also built.
-  ex2d.build_surrogate_v1()
-
-  # 3. Plot the model
-  ex2d.plot_contours()
+.. literalinclude:: ../examples/example2.py
 
 Which produces the following figure:
   
@@ -122,12 +94,17 @@ Which produces the following figure:
 	   
 The red circle is the exact minimum, and the crosses are the minima approximated by Kriging/GEK.
 
-Standard usage
---------------
+Higher-dimensions/expensive functions
+-------------------------------------
 
-The classes Example1d and 1d
+
+.. literalinclude:: ../examples/example3.py
+
+Which produces the following figure:
+
+.. image:: Figure_3.png
+
 	   
-
 Documentation and API reference
 ===============================
 

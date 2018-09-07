@@ -247,7 +247,7 @@ class GEK:
 		GEK.predict() for plotting etc.	 Return x (n), dx (n x d).
 		"""
 		assert xc.ndim == 1 and xc.size % (self.d + 1) == 0, 'Dimension of input wrong.'
-		n = xc.size / (self.d + 1)
+		n = xc.size // (self.d + 1)
 		x = xc[:n]	# Values
 		dx = xc[n:].reshape((n, self.d))  # Gradients
 		return x, dx
